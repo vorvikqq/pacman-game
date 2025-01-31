@@ -12,7 +12,7 @@ class GameController(object):
     self.clock = pygame.time.Clock()
     self.nodes = NodeGroup()
     self.nodes.setup_test_nodes()
-    self.pacman = Pacman()
+    self.pacman = Pacman(self.nodes.nodeList[0])
 
   def setBackground(self):
     self.background = pygame.surface.Surface(SCREENSIZE).convert()
