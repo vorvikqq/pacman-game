@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from constants import *
+from pacman import Pacman 
 
 class GameController(object):
   def __init__(self):
@@ -8,6 +9,7 @@ class GameController(object):
     self.screen = pygame.display.set_mode(SCREENSIZE, 0,32)
     self.background = None
     self.clock = pygame.time.Clock()
+    self.pacman = Pacman()
 
   def setBackground(self):
     self.background = pygame.surface.Surface(SCREENSIZE).convert()
@@ -18,6 +20,7 @@ class GameController(object):
   
   def update(self):
         dt = self.clock.tick(60) / 1000.0
+        self.pacman.update(dt)
         self.checkEvents()
         self.render()
 
@@ -27,6 +30,8 @@ class GameController(object):
             exit()
 
   def render(self):
+      self.screen.blit(self.background, (0,0))
+      self.pacman.render(self.screen)
       pygame.display.update()
 
 if __name__ == "__main__":
