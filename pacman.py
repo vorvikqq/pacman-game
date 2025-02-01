@@ -19,14 +19,22 @@ class Pacman(object):
         self.color = YELLOW
         self.node = node
         self.set_position()
+        self.target = node
 
     def set_position(self):
         self.position = self.node.position.copy()
-    def update(self, dt):	
+
+    def update(self, dt):
+        self.position += self.directions[self.direction] * self.speed * dt 
         direction = self.getValidKey()
-        self.direction = direction
-        self.node = self.get_new_target(direction)
-        self.set_position()
+        if self.overshot_target():
+            self.node = self.target
+            self.target = self.get_new_target(direction)
+            if self.target is not self.node:
+                self.direction = direction
+            else:
+                self.direction = STOP
+            self.set_position()
 
     def valid_direction(self,direction):
         if direction is not STOP:
@@ -54,4 +62,13 @@ class Pacman(object):
     def render(self, screen):
         p = self.position.asInt()
         pygame.draw.circle(screen, self.color, p, self.radius)
+
+    def overshot_target(self):
+        if self.target is not None:
+            vec1 = self.target.position - self.node.position
+            vec2 = self.position - self.node.position
+            node2_target = vec1.magnitudeSquared()
+            node2_self = vec2.magnitudeSquared()
+            return node2_self >= node2_target
+        return False
 
