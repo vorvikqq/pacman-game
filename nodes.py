@@ -10,7 +10,8 @@ class Node(object):
             LEFT: None,
             RIGHT: None,
             UP: None,
-            DOWN: None
+            DOWN: None,
+            PORTAL:None
         }
 
     def render(self, screen):
@@ -98,6 +99,13 @@ class NodeGroup(object):
     def getStartTempNode(self):
         nodes = list(self.nodesLUT.values())
         return nodes[0]
+
+    def setPortalPair(self, pair1, pair2):
+        key1 = self.constructKey(*pair1)
+        key2 = self.constructKey(*pair2)
+        if key1 in self.nodesLUT.keys() and key2 in self.nodesLUT.keys():
+            self.nodesLUT[key1].neighbors[PORTAL] = self.nodesLUT[key2]
+            self.nodesLUT[key2].neighbors[PORTAL] = self.nodesLUT[key1]
 
     def render(self, screen):
         # Рендеринг всіх вузлів і їх з'єднань на екрані
