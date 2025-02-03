@@ -16,6 +16,7 @@ class Entity():
         }
         self.direction = STOP
         self.speed = 100 * TILEWIDTH/16
+        self.collide_radius = 5
         self.radius = 10
         self.color = WHITE
         self.node = node

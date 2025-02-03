@@ -11,6 +11,7 @@ class Fruit(Entity):
         self.timer = 0
         self.destroy = False
         self.points = 100
+        self.setBetweenNodes(RIGHT)
 
     def update(self, dt):
         self.timer += dt
