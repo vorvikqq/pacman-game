@@ -32,6 +32,23 @@ class Entity():
                 return True
         return False
     
+    """
+        Method that gives us a list of all posible directions that entity can go
+
+        returns a list of all posible directions
+    """
+    def valid_directions_list(self):
+        directions = []
+        for key in [UP, DOWN, LEFT, RIGHT]:
+            if self.valid_direction(key):
+                if key != self.direction * -1:
+                    directions.append(key)
+
+        if len(directions) == 0:
+            directions.append(self.direction * -1)
+
+        return directions
+
     def get_new_target(self, direction):
         if self.valid_direction(direction):
             return self.node.neighbors[direction]

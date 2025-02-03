@@ -4,6 +4,7 @@ from constants import *
 from pacman import Pacman
 from nodes import NodeGroup
 from pellets import PelletGroup
+from ghosts import Ghost
 
 class GameController(object):
     def __init__(self):
@@ -22,10 +23,14 @@ class GameController(object):
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.getStartTempNode())
+        self.random_ghost = Ghost(self.nodes.getStartTempNode(), Ghost.random_direction, GREEN)
+        self.goal_ghost = Ghost(self.nodes.getStartTempNode(), Ghost.goal_direction, BLUE, self.pacman)
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0
         self.pacman.update(dt)
+        self.random_ghost.update(dt)
+        self.goal_ghost.update(dt)
         self.pelletGroup.update(dt)
         self.checkPelletEvents()
         self.checkEvents()
@@ -47,6 +52,8 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
         self.pacman.render(self.screen)
+        self.random_ghost.render(self.screen)
+        self.goal_ghost.render(self.screen)
         pygame.display.update()
 
 if __name__ == "__main__":
