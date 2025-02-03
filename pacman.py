@@ -16,6 +16,7 @@ class Pacman(object):
         self.direction = STOP
         self.speed = 100 * TILEWIDTH/16
         self.radius = 10
+        self.collideRadius = 5
         self.color = YELLOW
         self.node = node
         self.set_position()
@@ -92,3 +93,11 @@ class Pacman(object):
                 return True
         return False
 
+    def eatPellets(self, pelletList):
+        for pellet in pelletList:
+            d = self.position - pellet.position
+            dSquared = d.magnitudeSquared()
+            rSquared = (pellet.radius + self.collideRadius) ** 2
+            if dSquared <= rSquared:
+                return pellet
+        return None
