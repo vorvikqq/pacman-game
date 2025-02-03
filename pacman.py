@@ -23,6 +23,7 @@ class Pacman(Entity):
         self.node = node
         self.set_position()
         self.target = node
+        self.setBetweenNodes(LEFT)
 
     # def set_position(self):
     #     self.position = self.node.position.copy()

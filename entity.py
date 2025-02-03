@@ -62,4 +62,9 @@ class Entity():
         p = self.position.asInt()
         pygame.draw.circle(screen, self.color, p, self.radius)
 
-   
+    def setBetweenNodes(self, direction):
+        if self.node.neighbors[direction] is not None:
+            self.target = self.node.neighbors[direction]
+            self.position = (self.node.position + self.target.position) / 2.0
+
+
