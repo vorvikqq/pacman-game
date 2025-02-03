@@ -10,6 +10,7 @@ BLACK = (0,0,0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+GREEN = (0, 255, 0)
 
 STOP = 0
 UP = 1
@@ -21,3 +22,4 @@ PACMAN = 0
 PELLET = 1
 POWERPELLET = 2
 PORTAL = 3
+FRUIT = 8
