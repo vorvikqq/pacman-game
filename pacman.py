@@ -16,6 +16,7 @@ class Pacman(object):
         self.direction = STOP
         self.speed = 100 * TILEWIDTH/16
         self.radius = 10
+        self.collideRadius = 5
         self.color = YELLOW
         self.node = node
         self.set_position()
@@ -29,6 +30,8 @@ class Pacman(object):
         direction = self.getValidKey()
         if self.overshot_target():
             self.node = self.target
+            if self.node.neighbors[PORTAL] is not None:
+                self.node = self.node.neighbors[PORTAL]
             self.target = self.get_new_target(direction)
             if self.target is not self.node:
                 self.direction = direction
@@ -90,3 +93,11 @@ class Pacman(object):
                 return True
         return False
 
+    def eatPellets(self, pelletList):
+        for pellet in pelletList:
+            d = self.position - pellet.position
+            dSquared = d.magnitudeSquared()
+            rSquared = (pellet.radius + self.collideRadius) ** 2
+            if dSquared <= rSquared:
+                return pellet
+        return None
