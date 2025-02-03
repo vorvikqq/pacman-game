@@ -2,9 +2,11 @@ import pygame
 from pygame.locals import *
 from vector import Vector
 from constants import *
+from entity import Entity
 
-class Pacman(object):
+class Pacman(Entity):
     def __init__(self, node):
+        super().__init__(node)
         self.name = PACMAN
         self.directions = {
           STOP : Vector(),
@@ -22,8 +24,8 @@ class Pacman(object):
         self.set_position()
         self.target = node
 
-    def set_position(self):
-        self.position = self.node.position.copy()
+    # def set_position(self):
+    #     self.position = self.node.position.copy()
 
     def update(self, dt):
         self.position += self.directions[self.direction] * self.speed * dt 
@@ -45,16 +47,16 @@ class Pacman(object):
             if self.opposite_direction(direction):
                 self.reverse_direction()
 
-    def valid_direction(self,direction):
-        if direction is not STOP:
-            if self.node.neighbors[direction] is not None:
-                return True
-        return False
+    # def valid_direction(self,direction):
+    #     if direction is not STOP:
+    #         if self.node.neighbors[direction] is not None:
+    #             return True
+    #     return False
 
-    def get_new_target(self, direction):
-        if self.valid_direction(direction):
-            return self.node.neighbors[direction]
-        return self.node
+    # def get_new_target(self, direction):
+    #     if self.valid_direction(direction):
+    #         return self.node.neighbors[direction]
+    #     return self.node
 
     def getValidKey(self):
         key_pressed = pygame.key.get_pressed()
@@ -68,30 +70,31 @@ class Pacman(object):
             return RIGHT
         return STOP
     
-    def render(self, screen):
-        p = self.position.asInt()
-        pygame.draw.circle(screen, self.color, p, self.radius)
-
-    def overshot_target(self):
-        if self.target is not None:
-            vec1 = self.target.position - self.node.position
-            vec2 = self.position - self.node.position
-            node2_target = vec1.magnitudeSquared()
-            node2_self = vec2.magnitudeSquared()
-            return node2_self >= node2_target
-        return False
     
-    def reverse_direction(self):
-        self.direction *= -1
-        temp = self.node
-        self.node = self.target
-        self.target = temp
+    # def render(self, screen):
+    #     p = self.position.asInt()
+    #     pygame.draw.circle(screen, self.color, p, self.radius)
+    
+    # def overshot_target(self):
+    #     if self.target is not None:
+    #         vec1 = self.target.position - self.node.position
+    #         vec2 = self.position - self.node.position
+    #         node2_target = vec1.magnitudeSquared()
+    #         node2_self = vec2.magnitudeSquared()
+    #         return node2_self >= node2_target
+    #     return False
+    
+    # def reverse_direction(self):
+    #     self.direction *= -1
+    #     temp = self.node
+    #     self.node = self.target
+    #     self.target = temp
 
-    def opposite_direction(self, direction):
-        if direction is not STOP:
-            if direction == self.direction * -1:
-                return True
-        return False
+    # def opposite_direction(self, direction):
+    #     if direction is not STOP:
+    #         if direction == self.direction * -1:
+    #             return True
+    #     return False
 
     def eatPellets(self, pelletList):
         for pellet in pelletList:
