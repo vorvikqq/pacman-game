@@ -4,16 +4,19 @@ class DefaultMode():
     def __init__(self):
         self.timer = 0
         self.mode = None
-        self.scatter()
+        self.wait()
 
     def update(self, dt):
         self.timer += dt
 
         if self.timer >= self.time:
-            if self.mode == SCATTER:
-                self.chase() 
+            if self.mode == WAIT:
+                self.scatter() 
+            elif self.mode == SCATTER:
+                self.chase()
             elif self.mode == CHASE:
                 self.scatter()
+            
 
     def scatter(self):
         self.mode = SCATTER
@@ -23,6 +26,11 @@ class DefaultMode():
     def chase(self):
         self.mode = CHASE
         self.time = 20
+        self.timer = 0
+
+    def wait(self):
+        self.mode = WAIT
+        self.time = 5
         self.timer = 0
 
 class ModeController():

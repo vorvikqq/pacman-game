@@ -47,6 +47,31 @@ class NodeGroup(object):
                     x, y = self.constructKey(col + xoffset, row + yoffset)
                     self.nodesLUT[(x, y)] = Node(x, y)
 
+    """
+        A method for creating a home for ghosts
+    """
+    def createHomeNodes(self, xoffset, yoffset):
+        homedata = np.array([['X','X','+','X','X'],
+                             ['X','X','.','X','X'],
+                             ['+','X','.','X','+'],
+                             ['+','.','+','.','+'],
+                             ['+','X','X','X','+']])
+
+        self.createNodeTable(homedata, xoffset, yoffset)
+        self.connectHorizontally(homedata, xoffset, yoffset)
+        self.connectVertically(homedata, xoffset, yoffset)
+        self.homekey = self.constructKey(xoffset+2, yoffset)
+        return self.homekey
+
+    """
+        Method for connecting created home nodes
+    """
+    def connectHomeNodes(self, homekey, otherkey, direction):     
+        key = self.constructKey(*otherkey)
+        self.nodesLUT[homekey].neighbors[direction] = self.nodesLUT[key]
+        self.nodesLUT[key].neighbors[direction*-1] = self.nodesLUT[homekey]
+
+
     def constructKey(self, x, y):
         # Формуємо ключ для вузла на основі координат
         return x * TILEWIDTH, y * TILEHEIGHT
