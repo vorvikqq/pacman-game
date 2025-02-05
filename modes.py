@@ -15,6 +15,8 @@ class DefaultMode():
             elif self.mode == SCATTER:
                 self.chase()
             elif self.mode == CHASE:
+                self.random()
+            elif self.mode == RANDOM:
                 self.scatter()
             
 
@@ -32,6 +34,12 @@ class DefaultMode():
         self.mode = WAIT
         self.time = 5
         self.timer = 0
+
+    def random(self):
+        self.mode = RANDOM
+        self.time = 10
+        self.timer = 0
+
 
 class ModeController():
     def __init__(self, ghost):

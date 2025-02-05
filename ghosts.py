@@ -8,18 +8,19 @@ from modes import ModeController
 
 class Ghost(Entity):
 
-    def __init__(self, node, pacman):
+    def __init__(self, node, pacman, home_goal = Vector()):
         super().__init__(node)
         self.name = GHOST
-        self.goal = Vector()
+        self.goal = Vector
+        self.home_goal = home_goal
         self.pacman = pacman
         self.mode = ModeController(self)
         self.update_move_method()
 
     def update_move_method(self):
         if self.mode.current_mode is SCATTER:
-            self.move_method = self.random_movement
-            self.color = GREEN
+            self.move_method = self.scatter_movement
+            self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
             self.move_method = self.goal_movement
@@ -28,13 +29,29 @@ class Ghost(Entity):
         elif self.mode.current_mode is WAIT:
             self.move_method = self.wait_movement
             self.color = WHITE
+
+        elif self.mode.current_mode is RANDOM:
+            self.move_method = self.random_movement
+            self.color = GREEN
+
+    def update_goal(self):
+        if self.mode.current_mode is CHASE:
+            self.goal = self.pacman.node.position
+
+        elif self.mode.current_mode is SCATTER:
+            self.goal = self.home_goal
+
+        # elif self.mode.current_mode is WAIT:
+        #     self.goal = self.node.position 
+            
+        # elif self.mode.current_mode is RANDOM:    
         
     """
         Method which overrides Entity(update) method and basically contorls movement of ghost
         Technically, for now ghosts move fully random
     """
     def update(self, dt):
-        self.position += self.directions[self.direction] * self.speed * dt 
+        self.position += self.directions[self.direction] * self.speed * dt
         self.mode.update(dt)
 
         if self.overshot_target():
@@ -50,12 +67,14 @@ class Ghost(Entity):
 
             if self.target != self.node:
                 self.direction = new_direction
-            
+                
             else:
                 self.target = self.get_new_target(self.direction)
 
             self.set_position()
-            
+
+        self.update_goal()
+        
     """
         Method for getting all avaliable directions for ghost to move
 
@@ -83,8 +102,7 @@ class Ghost(Entity):
 
         returns a closest direction to pacman
     """
-    def goal_movement(self, directions):
-        self.goal = self.pacman.node.position
+    def goal_movement(self, directions, given_node = None):
         distances = []
 
         for direction in directions:
@@ -100,12 +118,24 @@ class Ghost(Entity):
         elif DOWN in directions:
             return DOWN
         return directions[0]
+    
+    def scatter_movement(self, directions):
+        return self.goal_movement(directions)
 
 
 
-# class GhostsGroup():
-#     def __init__(self, node, pacman):
-#         self.ghost1 = Ghost(node, pacman)
-#         self.ghost2 = Ghost(node, pacman)
 
-#         self.ghosts_list = [self.ghost1, self.ghost2]
+class GhostsGroup():
+    def __init__(self, node, pacman):
+        self.ghost1 = Ghost(node, pacman, Vector(0, 0))
+        self.ghost2 = Ghost(node, pacman, Vector(520, 80))
+
+        self.ghosts_list = [self.ghost1, self.ghost2]
+
+    def update(self, dt):
+        for ghost in self.ghosts_list:
+            ghost.update(dt)
+
+    def render(self, screen):
+        for ghost in self.ghosts_list:
+            ghost.render(screen)

@@ -13,6 +13,7 @@ RED = (255, 0, 0)
 #temp colors for painting ghosts
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
+ORANGE = (255, 165, 0)
 
 STOP = 0
 UP = 1
@@ -30,3 +31,4 @@ PORTAL = 3
 CHASE = "CHASE"
 SCATTER = "SCATTER"
 WAIT = "WAIT"
+RANDOM = "RANDOM"

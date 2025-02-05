@@ -26,6 +26,13 @@ class Entity():
     def set_position(self):
         self.position = self.node.position.copy()
     
+    def set_spawn_node(self, node):
+        self.node = node
+        self.target = node
+        self.set_position()
+        self.direction = STOP
+
+    
     def valid_direction(self,direction):
         if direction is not STOP:
             if self.node.neighbors[direction] is not None:
