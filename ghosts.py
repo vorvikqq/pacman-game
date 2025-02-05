@@ -4,27 +4,43 @@ from vector import Vector
 from constants import *
 from random import randint
 from entity import Entity
+from modes import ModeController
 
 class Ghost(Entity):
     #color is temp here, just for better testing
-    def __init__(self, node, move_method, color, pacman = None):
+    def __init__(self, node, pacman, color = WHITE):
         super().__init__(node)
         self.name = GHOST
         self.color = color
         self.goal = Vector()
         self.pacman = pacman
-        self.move_method = move_method 
+        self.mode = ModeController(self)
+        self.update_move_method()
+
+    def update_move_method(self):
+        if self.mode.current_mode is SCATTER:
+            self.move_method = self.random_direction
+            self.color = GREEN
+
+        elif self.mode.current_mode is CHASE:
+            self.move_method = self.goal_direction
+            self.color = BLUE
+        
+
+
     """
         Method which overrides Entity(update) method and basically contorls movement of ghost
         Technically, for now ghosts move fully random
     """
     def update(self, dt):
         self.position += self.directions[self.direction] * self.speed * dt 
+        self.mode.update(dt)
+
         if self.overshot_target():
             self.node = self.target
             directions_list = self.valid_directions_list()
 
-            new_direction = self.move_method(self, directions_list)
+            new_direction = self.move_method(directions_list)
 
             if self.node.neighbors[PORTAL] is not None:
                 self.node = self.node.neighbors[PORTAL]

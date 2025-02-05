@@ -23,8 +23,8 @@ class GameController(object):
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.getStartTempNode())
-        self.random_ghost = Ghost(self.nodes.getStartTempNode(), Ghost.random_direction, GREEN)
-        self.goal_ghost = Ghost(self.nodes.getStartTempNode(), Ghost.goal_direction, BLUE, self.pacman)
+        self.random_ghost = Ghost(self.nodes.getRandomStartTempNode(), self.pacman)
+        self.goal_ghost = Ghost(self.nodes.getRandomStartTempNode(), self.pacman)
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0

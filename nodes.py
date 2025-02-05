@@ -2,6 +2,7 @@ import pygame
 from vector import Vector
 from constants import *
 import numpy as np
+from random import randint
 
 class Node(object):
     def __init__(self, x, y):
@@ -99,6 +100,12 @@ class NodeGroup(object):
     def getStartTempNode(self):
         nodes = list(self.nodesLUT.values())
         return nodes[0]
+
+    #temp method for testing
+
+    def getRandomStartTempNode(self):
+        nodes = list(self.nodesLUT.values())
+        return nodes[randint(0, len(nodes) - 1)]
 
     def setPortalPair(self, pair1, pair2):
         key1 = self.constructKey(*pair1)
