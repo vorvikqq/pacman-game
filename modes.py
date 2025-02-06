@@ -1,24 +1,33 @@
 from constants import *
 
 class DefaultMode():
-    def __init__(self):
+    def __init__(self, start_mode = WAIT):  
         self.timer = 0
         self.mode = None
-        self.wait()
+        self.set_mode(start_mode)
 
     def update(self, dt):
         self.timer += dt
 
         if self.timer >= self.time:
             if self.mode == WAIT:
-                self.scatter() 
+                self.scatter()
             elif self.mode == SCATTER:
                 self.chase()
             elif self.mode == CHASE:
-                self.random()
+                self.scatter()
             elif self.mode == RANDOM:
                 self.scatter()
-            
+    
+    def set_mode(self, mode):  
+        if mode == SCATTER:
+            self.scatter()
+        elif mode == CHASE:
+            self.chase()
+        elif mode == WAIT:
+            self.wait()
+        elif mode == RANDOM:
+            self.random()
 
     def scatter(self):
         self.mode = SCATTER
@@ -42,12 +51,12 @@ class DefaultMode():
 
 
 class ModeController():
-    def __init__(self, ghost):
-        self.main_mode = DefaultMode()
+    def __init__(self, ghost, start_mode = WAIT):
+        self.main_mode = DefaultMode(start_mode)
         self.current_mode = self.main_mode.mode
         self.ghost = ghost
 
     def update(self, dt):
         self.main_mode.update(dt)
         self.current_mode = self.main_mode.mode  
-        self.ghost.update_move_method()  
+        self.ghost.update_move_method()

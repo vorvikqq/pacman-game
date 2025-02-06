@@ -8,11 +8,10 @@ from modes import ModeController
 
 class Ghost(Entity):
 
-    def __init__(self, node, pacman, home_goal = Vector()):
+    def __init__(self, node, pacman):
         super().__init__(node)
         self.name = GHOST
-        self.goal = Vector
-        self.home_goal = home_goal
+        self.goal = Vector()
         self.pacman = pacman
         self.mode = ModeController(self)
         self.update_move_method()
@@ -20,26 +19,26 @@ class Ghost(Entity):
     def update_move_method(self):
         if self.mode.current_mode is SCATTER:
             self.move_method = self.scatter_movement
-            self.color = ORANGE
+            # self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
             self.move_method = self.goal_movement
-            self.color = BLUE
+            # self.color = BLUE
 
         elif self.mode.current_mode is WAIT:
             self.move_method = self.wait_movement
-            self.color = WHITE
+            # self.color = WHITE
 
         elif self.mode.current_mode is RANDOM:
             self.move_method = self.random_movement
-            self.color = GREEN
+            # self.color = GREEN
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:
             self.goal = self.pacman.node.position
 
         elif self.mode.current_mode is SCATTER:
-            self.goal = self.home_goal
+            self.goal = self.scatter_goal
 
         # elif self.mode.current_mode is WAIT:
         #     self.goal = self.node.position 
@@ -102,7 +101,7 @@ class Ghost(Entity):
 
         returns a closest direction to pacman
     """
-    def goal_movement(self, directions, given_node = None):
+    def goal_movement(self, directions):
         distances = []
 
         for direction in directions:
@@ -113,24 +112,86 @@ class Ghost(Entity):
         return directions[index]
     
     def wait_movement(self, directions):
-        if UP in directions:
-            return UP
-        elif DOWN in directions:
-            return DOWN
-        return directions[0]
+        return self.direction * -1
     
     def scatter_movement(self, directions):
         return self.goal_movement(directions)
 
 
+class Blinky(Ghost):
+    def __init__(self, node, pacman):
+        super().__init__(node, pacman)
+        self.mode = ModeController(self, SCATTER)  
+        self.color = PURPLE
+
+
+    def update_goal(self):
+        if self.mode.current_mode is CHASE:
+            self.goal = self.pacman.node.position
+
+        elif self.mode.current_mode is SCATTER:
+            self.goal = Vector(0, 0)
+
+class Pinky(Ghost):
+    def __init__(self, node, pacman):
+        super().__init__(node, pacman)
+        self.color = PINK
+
+        
+    def update_goal(self):
+        if self.mode.current_mode is CHASE:
+            self.goal = self.pacman.node.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
+
+        elif self.mode.current_mode is SCATTER:
+            self.goal = Vector(520, 80)
+
+class Inky(Ghost):
+    def __init__(self, node, pacman, blinky = None):
+        super().__init__(node, pacman)
+        self.color = CYAN
+        self.blinky = blinky
+
+
+    def update_goal(self):
+        if self.mode.current_mode is CHASE:
+            pacman_plus_two = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 2
+            self.goal = (pacman_plus_two - self.blinky.position) * 2 + self.blinky.position
+
+        elif self.mode.current_mode is SCATTER:
+            self.goal = Vector(520, 640)
+
+
+class Clyde(Ghost):
+    def __init__(self, node, pacman):
+        super().__init__(node, pacman)
+        self.color = ORANGE
+
+
+    def update_goal(self):
+        if self.mode.current_mode is CHASE:
+            d = self.pacman.position - self.position
+
+            d_squared = d.magnitudeSquared()
+
+            if d_squared <= (TILEWIDTH * 8) ** 2:
+                self.mode.current_mode = SCATTER
+                self.goal = Vector(0, TILEHEIGHT*NROWS)
+
+            else:
+                self.goal = self.pacman.node.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
+
+        elif self.mode.current_mode is SCATTER:
+            self.goal = Vector(0, TILEHEIGHT*NROWS)
 
 
 class GhostsGroup():
     def __init__(self, node, pacman):
-        self.ghost1 = Ghost(node, pacman, Vector(0, 0))
-        self.ghost2 = Ghost(node, pacman, Vector(520, 80))
+        self.blinky = Blinky(node, pacman)
+        self.pinky = Pinky(node, pacman)
+        self.inky = Inky(node, pacman, self.blinky)
+        self.clyde = Clyde(node, pacman)
 
-        self.ghosts_list = [self.ghost1, self.ghost2]
+        self.ghosts_list = [self.blinky, self.pinky, self.inky, self.clyde]
 
     def update(self, dt):
         for ghost in self.ghosts_list:

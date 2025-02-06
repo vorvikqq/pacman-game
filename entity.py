@@ -22,6 +22,7 @@ class Entity():
         self.set_position()
         self.target = node
         self.visible = True
+        self.home_goal = Vector(0, 0)
     
     def set_position(self):
         self.position = self.node.position.copy()
@@ -29,11 +30,12 @@ class Entity():
     def set_spawn_node(self, node):
         self.node = node
         self.target = node
+        self.home_goal = node
         self.set_position()
-        self.direction = STOP
+        self.direction = UP
 
     
-    def valid_direction(self,direction):
+    def valid_direction(self, direction):
         if direction is not STOP:
             if self.node.neighbors[direction] is not None:
                 return True

@@ -29,8 +29,11 @@ class GameController(object):
 
         self.pacman = Pacman(self.nodes.getStartTempNode())
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
-        self.ghosts.ghost1.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
-        self.ghosts.ghost2.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
+        (270, 280)
+        self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
+        self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
+        self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
+        self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0
