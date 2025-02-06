@@ -21,16 +21,16 @@ class Entity():
         self.node = node
         self.set_position()
         self.target = node
+        self.home_goal = node
         self.visible = True
-        self.home_goal = Vector(0, 0)
     
     def set_position(self):
         self.position = self.node.position.copy()
     
-    def set_spawn_node(self, node):
-        self.node = node
-        self.target = node
-        self.home_goal = node
+    def set_spawn_node(self, given_node):
+        self.node = given_node
+        self.target = given_node
+        self.home_goal = given_node.position
         self.set_position()
         self.direction = UP
 

@@ -18,20 +18,32 @@ class Ghost(Entity):
 
     def update_move_method(self):
         if self.mode.current_mode is SCATTER:
+            self.speed = 100 * TILEWIDTH/16
             self.move_method = self.scatter_movement
             # self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
+            self.speed = 100 * TILEWIDTH/16
             self.move_method = self.goal_movement
             # self.color = BLUE
 
         elif self.mode.current_mode is WAIT:
+            self.speed = 100 * TILEWIDTH/16
             self.move_method = self.wait_movement
             # self.color = WHITE
 
         elif self.mode.current_mode is RANDOM:
+            self.speed = 100 * TILEWIDTH/16
             self.move_method = self.random_movement
             # self.color = GREEN
+
+        elif self.mode.current_mode is FREIGHT:
+            self.speed = 50 * TILEWIDTH/16
+            self.move_method = self.freight_movement
+
+        elif self.mode.current_mode is SPAWN:
+            self.speed = 200 * TILEWIDTH/16
+            self.move_method = self.spawn_movement
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:
@@ -40,10 +52,7 @@ class Ghost(Entity):
         elif self.mode.current_mode is SCATTER:
             self.goal = self.scatter_goal
 
-        # elif self.mode.current_mode is WAIT:
-        #     self.goal = self.node.position 
-            
-        # elif self.mode.current_mode is RANDOM:    
+
         
     """
         Method which overrides Entity(update) method and basically contorls movement of ghost
@@ -116,6 +125,12 @@ class Ghost(Entity):
     
     def scatter_movement(self, directions):
         return self.goal_movement(directions)
+    
+    def freight_movement(self, directions):
+        return self.random_movement(directions)
+    
+    def spawn_movement(self, directions):
+        return self.goal_movement(directions)
 
 
 class Blinky(Ghost):
@@ -124,13 +139,15 @@ class Blinky(Ghost):
         self.mode = ModeController(self, SCATTER)  
         self.color = PURPLE
 
-
     def update_goal(self):
         if self.mode.current_mode is CHASE:
             self.goal = self.pacman.node.position
 
         elif self.mode.current_mode is SCATTER:
             self.goal = Vector(0, 0)
+
+        elif self.mode.current_mode is SPAWN:
+            self.goal = self.home_goal
 
 class Pinky(Ghost):
     def __init__(self, node, pacman):
@@ -144,6 +161,10 @@ class Pinky(Ghost):
 
         elif self.mode.current_mode is SCATTER:
             self.goal = Vector(520, 80)
+
+        
+        elif self.mode.current_mode is SPAWN:
+            self.goal = self.home_goal
 
 class Inky(Ghost):
     def __init__(self, node, pacman, blinky = None):
@@ -159,6 +180,9 @@ class Inky(Ghost):
 
         elif self.mode.current_mode is SCATTER:
             self.goal = Vector(520, 640)
+
+        elif self.mode.current_mode is SPAWN:
+            self.goal = self.home_goal
 
 
 class Clyde(Ghost):
@@ -182,6 +206,9 @@ class Clyde(Ghost):
 
         elif self.mode.current_mode is SCATTER:
             self.goal = Vector(0, TILEHEIGHT*NROWS)
+
+        elif self.mode.current_mode is SPAWN:
+            self.goal = self.home_goal
 
 
 class GhostsGroup():
