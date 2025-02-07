@@ -18,11 +18,12 @@ class Pacman(Entity):
         self.direction = STOP
         self.speed = 100 * TILEWIDTH/16
         self.radius = 10
-        self.collideRadius = 5
+        # self.collideRadius = 5
         self.color = YELLOW
         self.node = node
         self.set_position()
         self.target = node
+        self.setBetweenNodes(LEFT)
 
     # def set_position(self):
     #     self.position = self.node.position.copy()
@@ -98,11 +99,23 @@ class Pacman(Entity):
 
     def eatPellets(self, pelletList):
         for pellet in pelletList:
-            d = self.position - pellet.position
-            dSquared = d.magnitudeSquared()
-            rSquared = (pellet.radius + self.collideRadius) ** 2
-            if dSquared <= rSquared:
+            if self.collideCheck(pellet):
                 return pellet
+        return None    
+    
+    # def eatPellets(self, pelletList):
+    #     for pellet in pelletList:
+    #         if self.collideCheck(pellet):
+    #             return pellet
+    #     return None    
+    
+    def collideCheck(self, other):
+        d = self.position - other.position
+        dSquared = d.magnitudeSquared()
+        rSquared = (self.collide_radius + other.collide_radius)**2
+        if dSquared <= rSquared:
+            return True
+        return False
         return None
     
 
