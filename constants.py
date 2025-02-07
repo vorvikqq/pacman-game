@@ -10,6 +10,13 @@ BLACK = (0,0,0)
 YELLOW = (255, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+#temp colors for painting ghosts
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+ORANGE = (255, 165, 0)
+PURPLE = (128, 0, 128)
+PINK = (252, 15, 192)
+CYAN = (0, 255, 255)
 
 STOP = 0
 UP = 1
@@ -18,6 +25,15 @@ LEFT = 2
 RIGHT = -2
 
 PACMAN = 0
+GHOST = 4
+
 PELLET = 1
 POWERPELLET = 2
 PORTAL = 3
+
+CHASE = "CHASE"
+SCATTER = "SCATTER"
+WAIT = "WAIT"
+RANDOM = "RANDOM"
+FREIGHT = "FREIGHT"
+SPAWN = "SPAWN"

@@ -104,3 +104,10 @@ class Pacman(Entity):
             if dSquared <= rSquared:
                 return pellet
         return None
+    
+
+    # #TEMP ONLY
+    # def render(self, screen):
+    #     p = self.position.asInt()
+    #     pygame.draw.circle(screen, self.color, p, self.radius)
+    #     print(p)

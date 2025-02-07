@@ -4,6 +4,7 @@ from constants import *
 from pacman import Pacman
 from nodes import NodeGroup
 from pellets import PelletGroup
+from ghosts import Ghost, GhostsGroup
 
 class GameController(object):
     def __init__(self):
@@ -21,11 +22,22 @@ class GameController(object):
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
+        
+        homekey = self.nodes.createHomeNodes(11.5, 14)
+        self.nodes.connectHomeNodes(homekey, (12,14), LEFT)
+        self.nodes.connectHomeNodes(homekey, (15,14), RIGHT)
+
         self.pacman = Pacman(self.nodes.getStartTempNode())
+        self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
+        self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
+        self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
+        self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
+        self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0
         self.pacman.update(dt)
+        self.ghosts.update(dt)
         self.pelletGroup.update(dt)
         self.checkPelletEvents()
         self.checkEvents()
@@ -47,6 +59,7 @@ class GameController(object):
         self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
         self.pacman.render(self.screen)
+        self.ghosts.render(self.screen)
         pygame.display.update()
 
 if __name__ == "__main__":

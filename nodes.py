@@ -2,6 +2,7 @@ import pygame
 from vector import Vector
 from constants import *
 import numpy as np
+from random import randint
 
 class Node(object):
     def __init__(self, x, y):
@@ -45,6 +46,31 @@ class NodeGroup(object):
                 if data[row][col] in self.nodeSymbols:
                     x, y = self.constructKey(col + xoffset, row + yoffset)
                     self.nodesLUT[(x, y)] = Node(x, y)
+
+    """
+        A method for creating a home for ghosts
+    """
+    def createHomeNodes(self, xoffset, yoffset):
+        homedata = np.array([['X','X','+','X','X'],
+                             ['X','X','.','X','X'],
+                             ['+','X','.','X','+'],
+                             ['+','.','+','.','+'],
+                             ['+','X','X','X','+']])
+
+        self.createNodeTable(homedata, xoffset, yoffset)
+        self.connectHorizontally(homedata, xoffset, yoffset)
+        self.connectVertically(homedata, xoffset, yoffset)
+        self.homekey = self.constructKey(xoffset+2, yoffset)
+        return self.homekey
+
+    """
+        Method for connecting created home nodes
+    """
+    def connectHomeNodes(self, homekey, otherkey, direction):     
+        key = self.constructKey(*otherkey)
+        self.nodesLUT[homekey].neighbors[direction] = self.nodesLUT[key]
+        self.nodesLUT[key].neighbors[direction*-1] = self.nodesLUT[homekey]
+
 
     def constructKey(self, x, y):
         # Формуємо ключ для вузла на основі координат
@@ -99,6 +125,12 @@ class NodeGroup(object):
     def getStartTempNode(self):
         nodes = list(self.nodesLUT.values())
         return nodes[0]
+
+    #temp method for testing
+
+    def getRandomStartTempNode(self):
+        nodes = list(self.nodesLUT.values())
+        return nodes[randint(0, len(nodes) - 1)]
 
     def setPortalPair(self, pair1, pair2):
         key1 = self.constructKey(*pair1)
