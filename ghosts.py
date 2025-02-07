@@ -11,6 +11,7 @@ class Ghost(Entity):
     def __init__(self, node, pacman):
         super().__init__(node)
         self.name = GHOST
+        self.points = 200
         self.goal = Vector()
         self.pacman = pacman
         self.mode = ModeController(self)
@@ -18,31 +19,31 @@ class Ghost(Entity):
 
     def update_move_method(self):
         if self.mode.current_mode is SCATTER:
-            self.speed = 100 * TILEWIDTH/16
+            self.set_speed(100)
             self.move_method = self.scatter_movement
             # self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
-            self.speed = 100 * TILEWIDTH/16
+            self.set_speed(100)
             self.move_method = self.goal_movement
             # self.color = BLUE
 
         elif self.mode.current_mode is WAIT:
-            self.speed = 100 * TILEWIDTH/16
+            self.set_speed(100)
             self.move_method = self.wait_movement
             # self.color = WHITE
 
         elif self.mode.current_mode is RANDOM:
-            self.speed = 100 * TILEWIDTH/16
+            self.set_speed(100)
             self.move_method = self.random_movement
             # self.color = GREEN
 
         elif self.mode.current_mode is FREIGHT:
-            self.speed = 50 * TILEWIDTH/16
+            self.set_speed(50)
             self.move_method = self.freight_movement
 
         elif self.mode.current_mode is SPAWN:
-            self.speed = 200 * TILEWIDTH/16
+            self.set_speed(200)
             self.move_method = self.spawn_movement
 
     def update_goal(self):
@@ -131,6 +132,16 @@ class Ghost(Entity):
     
     def spawn_movement(self, directions):
         return self.goal_movement(directions)
+    
+    def start_freight(self):
+        self.mode.set_freight_mode()
+        if self.mode.current_mode == FREIGHT:
+            self.set_speed(50)
+            self.move_method = self.random_movement
+    
+    def normal_mode(self):
+        self.set_speed(100)
+        self.move_method = self.goal_movement
 
 
 class Blinky(Ghost):
@@ -220,10 +231,26 @@ class GhostsGroup():
 
         self.ghosts_list = [self.blinky, self.pinky, self.inky, self.clyde]
 
+    def __iter__(self):
+        return iter(self.ghosts_list)
+    
     def update(self, dt):
         for ghost in self.ghosts_list:
             ghost.update(dt)
+    
+    def start_freight(self):
+        for ghost in self:
+            ghost.start_freight()
+        self.resetPoints()
 
     def render(self, screen):
         for ghost in self.ghosts_list:
             ghost.render(screen)
+
+    def updatePoints(self):
+        for ghost in self:
+            ghost.points *= 2
+
+    def resetPoints(self):
+        for ghost in self:
+            ghost.points = 200

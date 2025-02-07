@@ -63,6 +63,8 @@ class GameController(object):
         if pellet:
             self.pelletGroup.num_eaten += 1
             self.pelletGroup.pellets.remove(pellet)
+            if pellet.name == POWERPELLET:
+                self.ghosts.start_freight()
 
     def checkEvents(self):
         for event in pygame.event.get():

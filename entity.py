@@ -94,4 +94,7 @@ class Entity():
             self.target = self.node.neighbors[direction]
             self.position = (self.node.position + self.target.position) / 2.0
 
+    def set_speed(self, speed):
+        self.speed = speed * TILEWIDTH / 16
+
 
