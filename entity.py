@@ -32,6 +32,7 @@ class Entity():
         self.node = given_node
         self.target = given_node
         self.home_goal = given_node.position
+        self.spawn_node = given_node
         self.set_position()
         self.direction = UP
 

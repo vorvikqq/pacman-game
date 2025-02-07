@@ -111,8 +111,13 @@ class ModeController():
                 self.time = None
                 self.ghost.normal_mode()
                 self.current_mode = self.main_mode.mode
-        else:
+        elif self.current_mode in [SCATTER, CHASE]:
             self.current_mode =  self.main_mode.mode
+        if self.current_mode is SPAWN:
+            if self.ghost.node == self.ghost.spawn_node:
+                self.ghost.normal_mode()
+                self.current_mode = self.main_mode.mode
+
             
 
     def set_mode(self, mode):
@@ -129,3 +134,7 @@ class ModeController():
             self.set_mode(FREIGHT)
         elif self.current_mode is FREIGHT:
             self.timer = 0
+    
+    def set_spawn_mode(self):
+        if self.current_mode is FREIGHT:
+           self.set_mode(SPAWN)

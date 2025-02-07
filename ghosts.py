@@ -142,6 +142,16 @@ class Ghost(Entity):
     def normal_mode(self):
         self.set_speed(100)
         self.move_method = self.goal_movement
+    
+    def spawn(self):
+        self.goal = self.home_goal
+
+    def start_spawn(self):
+        self.mode.set_spawn_mode()
+        if self.mode.current_mode == SPAWN:
+            self.set_speed(150)
+            self.move_method = self.goal_movement
+            self.spawn()
 
 
 class Blinky(Ghost):
@@ -238,6 +248,10 @@ class GhostsGroup():
         for ghost in self.ghosts_list:
             ghost.update(dt)
     
+    def set_spawn_node(self, node):
+        for ghost in self:
+            ghost.set_spawn_node(node)
+
     def start_freight(self):
         for ghost in self:
             ghost.start_freight()
