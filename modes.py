@@ -26,6 +26,23 @@ class DefaultMode():
             elif self.mode == SPAWN:
                 self.wait()
     
+    def reset_mode(self):
+        """Повертає привида в стандартний режим (CHASE або SCATTER)"""
+        # Якщо привид зараз в режимі FREIGHT або іншому режимі, повертаємо до SCATTER або CHASE
+        if self.mode.current_mode == FREIGHT:
+            # Можна обрати між SCATTER та CHASE, залежно від поточної ситуації
+            self.mode.set_mode(SCATTER)  # або CHASE, якщо треба
+        elif self.mode.current_mode == WAIT:
+            self.mode.set_mode(SCATTER)  # можна за умовами гри встановити інший початковий режим
+
+    def normal_mode(self):
+        """Відновлює нормальну швидкість та режим для привида"""
+        # Встановлюємо стандартну швидкість привида, наприклад, 100
+        self.speed = self.set_speed(100)
+
+        # Визначаємо метод руху залежно від поточного режиму
+        self.update_move_method()
+
     def set_mode(self, mode):  
         if mode == SCATTER:
             self.scatter()
@@ -74,6 +91,8 @@ class DefaultMode():
 
 class ModeController():
     def __init__(self, ghost, start_mode = WAIT):
+        self.time = 0
+        self.timer = 0
         self.main_mode = DefaultMode(start_mode)
         self.current_mode = self.main_mode.mode
         self.ghost = ghost
@@ -85,3 +104,37 @@ class ModeController():
 
         if self.current_mode == SPAWN and self.ghost.node.position == self.ghost.home_goal:
             self.main_mode.set_mode(WAIT)
+
+        if self.current_mode is FREIGHT:
+            self.timer += dt
+            if self.timer >= self.time:
+                self.time = None
+                self.ghost.normal_mode()
+                self.current_mode = self.main_mode.mode
+        elif self.current_mode in [SCATTER, CHASE]:
+            self.current_mode =  self.main_mode.mode
+        if self.current_mode is SPAWN:
+            if self.ghost.node == self.ghost.spawn_node:
+                self.ghost.normal_mode()
+                self.current_mode = self.main_mode.mode
+
+            
+
+    def set_mode(self, mode):
+        """Динамічно змінює режим привида"""
+        self.main_mode.set_mode(mode)
+        self.current_mode = self.main_mode.mode  # Оновлюємо поточний режим
+        self.ghost.update_move_method()  # Оновлюємо метод руху відповідно до нового режиму
+
+    def set_freight_mode(self):
+        """Вмикає режим страху (FREIGHT), якщо привид у SCATTER або CHASE"""
+        if self.current_mode in [SCATTER, CHASE]:  
+            self.timer = 0
+            self.time = 7
+            self.set_mode(FREIGHT)
+        elif self.current_mode is FREIGHT:
+            self.timer = 0
+    
+    def set_spawn_mode(self):
+        if self.current_mode is FREIGHT:
+           self.set_mode(SPAWN)

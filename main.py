@@ -30,11 +30,13 @@ class GameController(object):
         self.nodes.connectHomeNodes(homekey, (15,14), RIGHT)
 
         self.pacman = Pacman(self.nodes.getStartTempNode())
+        # self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
+        # self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
+        # self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
+        # self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
+        # self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
-        self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
-        self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
-        self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
-        self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
+        self.ghosts.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0
@@ -45,6 +47,7 @@ class GameController(object):
             self.fruit.update(dt)
         self.checkPelletEvents()
         self.checkFruitEvents()
+        self.checkGhostEvents()
         self.checkEvents()
         self.render()
     
@@ -63,11 +66,20 @@ class GameController(object):
         if pellet:
             self.pelletGroup.num_eaten += 1
             self.pelletGroup.pellets.remove(pellet)
+            if pellet.name == POWERPELLET:
+                self.ghosts.start_freight()
 
+    
     def checkEvents(self):
         for event in pygame.event.get():
             if(event.type == QUIT):
                 exit()
+
+    def checkGhostEvents(self):
+        for ghost in self.ghosts:
+            if self.pacman.collide_ghost(ghost):
+                if ghost.mode.current_mode is FREIGHT:
+                    ghost.start_spawn()
 
     def render(self):
         self.screen.blit(self.background, (0, 0))

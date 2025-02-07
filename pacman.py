@@ -109,6 +109,9 @@ class Pacman(Entity):
     #             return pellet
     #     return None    
     
+    def collide_ghost(self, ghost):
+        return self.collideCheck(ghost)
+    
     def collideCheck(self, other):
         d = self.position - other.position
         dSquared = d.magnitudeSquared()
@@ -116,7 +119,6 @@ class Pacman(Entity):
         if dSquared <= rSquared:
             return True
         return False
-        return None
     
 
     # #TEMP ONLY
