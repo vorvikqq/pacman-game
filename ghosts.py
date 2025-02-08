@@ -153,6 +153,12 @@ class Ghost(Entity):
             self.move_method = self.goal_movement
             self.spawn()
 
+    def reset(self):
+        Entity.reset(self)
+        self.points = 200
+        self.move_method = self.goal_movement
+
+
 
 class Blinky(Ghost):
     def __init__(self, node, pacman):
@@ -276,3 +282,7 @@ class GhostsGroup():
     def show(self):
         for ghost in self:
             ghost.visible = True
+
+    def reset(self):
+        for ghost in self:
+            ghost.reset()
