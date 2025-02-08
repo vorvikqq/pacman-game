@@ -268,3 +268,11 @@ class GhostsGroup():
     def resetPoints(self):
         for ghost in self:
             ghost.points = 200
+    
+    def hide(self):
+        for ghost in self:
+            ghost.visible = False
+
+    def show(self):
+        for ghost in self:
+            ghost.visible = True
