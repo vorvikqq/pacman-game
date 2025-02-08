@@ -16,6 +16,13 @@ class GameController(object):
         self.clock = pygame.time.Clock()
         self.fruit = None
         self.pause = Pause(True)
+        self.level = 0
+
+    def next_level(self):
+        self.show_entities()
+        self.level += 1
+        self.pause.paused = True
+        self.startGame()
 
     def setBackground(self):
         self.background = pygame.surface.Surface(SCREENSIZE).convert()
@@ -31,7 +38,7 @@ class GameController(object):
         self.nodes.connectHomeNodes(homekey, (12,14), LEFT)
         self.nodes.connectHomeNodes(homekey, (15,14), RIGHT)
 
-        self.pacman = Pacman(self.nodes.getStartTempNode())
+        self.pacman = Pacman(self.nodes.getNodeFromTiles(15, 26))
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
         self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
         self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
@@ -72,6 +79,9 @@ class GameController(object):
             self.pelletGroup.pellets.remove(pellet)
             if pellet.name == POWERPELLET:
                 self.ghosts.start_freight()
+            if self.pelletGroup.is_empty():
+                self.hide_entities()
+                self.pause.set_pause(pause_time=3, func=self.next_level)
 
     
     def checkEvents(self):
