@@ -17,6 +17,21 @@ class GameController(object):
         self.fruit = None
         self.pause = Pause(True)
         self.level = 0
+        self.lives = 5
+
+    def restart_game(self):
+        self.lives = 5
+        self.level = 0
+        self.pause.paused = True
+        self.fruit = None
+        self.startGame()
+
+    def reset_level(self):
+        self.pause.paused = True
+        self.pacman.reset()
+        self.ghosts.reset()
+        self.fruit = None
+
 
     def next_level(self):
         self.show_entities()
@@ -90,11 +105,12 @@ class GameController(object):
                 exit()
             elif event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    self.pause.set_pause(player_paused=True)
-                    if not self.pause.paused:
-                        self.show_entities
-                    else:
-                        self.hide_entities()
+                    if self.pacman.alive:
+                        self.pause.set_pause(player_paused=True)
+                        if not self.pause.paused:
+                            self.show_entities
+                        else:
+                            self.hide_entities()
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
@@ -104,6 +120,16 @@ class GameController(object):
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
+                elif ghost.mode.current_mode is not SPAWN:
+                    if self.pacman.alive:
+                        self.lives -= 1
+                        self.pacman.die()
+                        self.ghosts.hide()
+                        if self.lives <= 0:
+                            self.pause.set_pause(pause_time=3, func=self.restart_game)
+                        else:
+                            self.pause.set_pause(pause_time=3, func=self.reset_level)
+
 
     def show_entities(self):
         self.pacman.visible = True

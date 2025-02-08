@@ -24,6 +24,7 @@ class Entity():
         self.target = node
         self.home_goal = node
         self.visible = True
+        self.set_spawn_node(node)
     
     def set_position(self):
         self.position = self.node.position.copy()
@@ -97,5 +98,11 @@ class Entity():
 
     def set_speed(self, speed):
         self.speed = speed * TILEWIDTH / 16
+    
+    def reset(self):
+        self.set_spawn_node(self.spawn_node)
+        self.direction = STOP
+        self.speed = 100
+        self.visible = True
 
 
