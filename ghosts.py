@@ -165,6 +165,7 @@ class Blinky(Ghost):
         super().__init__(node, pacman)
         self.mode = ModeController(self, SCATTER)  
         self.color = PURPLE
+        self.name = BLINKY
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:
@@ -180,6 +181,7 @@ class Pinky(Ghost):
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
         self.color = PINK
+        self.name = PINKY
 
         
     def update_goal(self):
@@ -198,6 +200,7 @@ class Inky(Ghost):
         super().__init__(node, pacman)
         self.color = CYAN
         self.blinky = blinky
+        self.name = INKY
 
 
     def update_goal(self):
@@ -216,7 +219,7 @@ class Clyde(Ghost):
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
         self.color = ORANGE
-
+        self.name = CLYDE
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:

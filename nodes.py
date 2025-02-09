@@ -15,6 +15,11 @@ class Node(object):
             PORTAL:None
         }
 
+        self.access = {UP:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT],
+                       DOWN:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT],
+                       LEFT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT],
+                       RIGHT:[PACMAN, BLINKY, PINKY, INKY, CLYDE, FRUIT]}
+
     def render(self, screen):
         for n in self.neighbors.keys():
             if self.neighbors[n] is not None:
