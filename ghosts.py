@@ -142,7 +142,7 @@ class Ghost(Entity):
     def normal_mode(self):
         self.set_speed(100)
         self.move_method = self.goal_movement
-        self.home_goal.denyAccess(DOWN, self)
+        self.spawn_node.denyAccess(DOWN, self)
     
     def spawn(self):
         self.goal = self.home_goal

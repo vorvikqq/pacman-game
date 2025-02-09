@@ -7,11 +7,13 @@ from pellets import PelletGroup
 from fruit import Fruit
 from ghosts import GhostsGroup
 from pauser import Pause
+from text import Text
 
 class GameController(object):
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
+        pygame.display.set_caption("Pac-Man Game")
         self.background = None
         self.clock = pygame.time.Clock()
         self.fruit = None
@@ -60,6 +62,8 @@ class GameController(object):
         self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
         self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
 
+        self.text = Text("SCORE", WHITE, 1, 1, 1 * TILEWIDTH, 100)
+
         self.nodes.denyHomeAccess(self.pacman)
         self.nodes.denyHomeAccessList(self.ghosts)
         self.nodes.denyAccessList(2 + 11.5, 3 + 14, LEFT, self.ghosts)
@@ -74,6 +78,7 @@ class GameController(object):
     def update(self):
         dt = self.clock.tick(60) / 1000.0
         self.pelletGroup.update(dt)
+        self.text.update(dt)
         if not self.pause.paused:
             self.pacman.update(dt)
             self.ghosts.update(dt)
@@ -159,6 +164,7 @@ class GameController(object):
         self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
+        self.text.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)
         self.pacman.render(self.screen)
