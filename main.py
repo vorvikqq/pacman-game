@@ -60,6 +60,17 @@ class GameController(object):
         self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
         self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
 
+        self.nodes.denyHomeAccess(self.pacman)
+        self.nodes.denyHomeAccessList(self.ghosts)
+        self.nodes.denyAccessList(2 + 11.5, 3 + 14, LEFT, self.ghosts)
+        self.nodes.denyAccessList(2 + 11.5, 3 + 14, RIGHT, self.ghosts)
+        self.ghosts.inky.spawn_node.denyAccess(RIGHT, self.ghosts.inky)
+        self.ghosts.clyde.spawn_node.denyAccess(LEFT, self.ghosts.clyde)
+        self.nodes.denyAccessList(12, 14, UP, self.ghosts)
+        self.nodes.denyAccessList(15, 14, UP, self.ghosts)
+        self.nodes.denyAccessList(12, 26, UP, self.ghosts)
+        self.nodes.denyAccessList(15, 26, UP, self.ghosts)
+
     def update(self):
         dt = self.clock.tick(60) / 1000.0
         self.pelletGroup.update(dt)
@@ -91,6 +102,10 @@ class GameController(object):
         pellet = self.pacman.eatPellets(self.pelletGroup.pellets)
         if pellet:
             self.pelletGroup.num_eaten += 1
+            if self.pelletGroup.num_eaten == 30:
+                self.ghosts.inky.spawn_node.allowAccess(RIGHT, self.ghosts.inky)
+            if self.pelletGroup.num_eaten == 70:
+                self.ghosts.clyde.spawn_node.allowAccess(LEFT, self.ghosts.clyde)
             self.pelletGroup.pellets.remove(pellet)
             if pellet.name == POWERPELLET:
                 self.ghosts.start_freight()
@@ -120,6 +135,7 @@ class GameController(object):
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
+                    self.nodes.allowHomeAccess(ghost)
                 elif ghost.mode.current_mode is not SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1
