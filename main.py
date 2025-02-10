@@ -21,6 +21,7 @@ class GameController(object):
         self.level = 0
         self.lives = 5
         self.score = 0
+        self.textGroup = TextGroup()
 
     def restart_game(self):
         self.lives = 5
@@ -69,7 +70,6 @@ class GameController(object):
         self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
         self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
 
-        self.textGroup = TextGroup()
 
         self.nodes.denyHomeAccess(self.pacman)
         self.nodes.denyHomeAccessList(self.ghosts)
@@ -132,6 +132,7 @@ class GameController(object):
             if self.pelletGroup.is_empty():
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
+                self.next_level()
 
     
     def checkEvents(self):
