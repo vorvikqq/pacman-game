@@ -8,6 +8,7 @@ from fruit import Fruit
 from ghosts import GhostsGroup
 from pauser import Pause
 from text import TextGroup
+from music import MusicController
 
 class GameController(object):
     def __init__(self):
@@ -22,6 +23,7 @@ class GameController(object):
         self.lives = 5
         self.score = 0
         self.textGroup = TextGroup()
+        self.musicController = MusicController()
 
     def restart_game(self):
         self.lives = 5
@@ -55,6 +57,7 @@ class GameController(object):
 
     def startGame(self):
         self.setBackground()
+        self.musicController.play_bg_music()
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
@@ -121,6 +124,7 @@ class GameController(object):
         pellet = self.pacman.eatPellets(self.pelletGroup.pellets)
         if pellet:
             self.pelletGroup.num_eaten += 1
+            self.musicController.play_pacman_eat_music()
             self.update_score(pellet.points)
             if self.pelletGroup.num_eaten == 30:
                 self.ghosts.inky.spawn_node.allowAccess(RIGHT, self.ghosts.inky)
@@ -149,6 +153,9 @@ class GameController(object):
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
+
+                if event.key == K_p:
+                    self.musicController.pause_music()
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
