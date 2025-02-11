@@ -16,7 +16,7 @@ class MusicController():
     def play_pacman_eat_music(self):
         if self.sound_status:
             if self.pacman_eat_sound.get_num_channels() == 0:  
-                self.pacman_eat_sound.play(maxtime=250)
+                self.pacman_eat_sound.play(maxtime=280)
 
     def pause_music(self):
         if self.sound_status == True:
