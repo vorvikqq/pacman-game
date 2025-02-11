@@ -6,7 +6,6 @@ from sprites import FruitSprites
 class Fruit(Entity):
     def __init__(self, node):
         Entity.__init__(self, node)
-        self.sprites = FruitSprites(self)
         self.name = FRUIT
         self.color = GREEN
         self.lifespan = 5
@@ -14,6 +13,7 @@ class Fruit(Entity):
         self.destroy = False
         self.points = 100
         self.setBetweenNodes(RIGHT)
+        self.sprites = FruitSprites(self)
 
     def update(self, dt):
         self.timer += dt

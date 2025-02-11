@@ -16,7 +16,6 @@ class Pacman(Entity):
           LEFT : Vector(-1,0),
           RIGHT : Vector(1,0)
         }
-        self.sprites = PacmanSprites(self)
         self.direction = STOP
         self.speed = 100 * TILEWIDTH/16
         self.radius = 10
@@ -28,6 +27,7 @@ class Pacman(Entity):
         self.direction = LEFT
         self.setBetweenNodes(LEFT)
         self.alive = True
+        self.sprites = PacmanSprites(self)
         
     
     def reset(self):

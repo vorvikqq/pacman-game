@@ -71,3 +71,19 @@ class FruitSprites(SpritesSheet):
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
 
+class LifeSprites(SpritesSheet):
+    def __init__(self, numlives):
+        SpritesSheet.__init__(self)
+        self.reset_lives(numlives)
+    
+    def remove_image(self):
+        if len(self.images) > 0:
+            self.images.pop(0)
+
+    def reset_lives(self, numlives):
+        self.images = []
+        for i in range(numlives):
+            self.images.append(self.get_image(0,0))
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
