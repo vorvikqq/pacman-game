@@ -5,6 +5,7 @@ from constants import *
 from random import randint
 from entity import Entity
 from modes import ModeController
+from sprites import GhostSprites
 
 class Ghost(Entity):
 
@@ -164,9 +165,10 @@ class Ghost(Entity):
 class Blinky(Ghost):
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
-        self.mode = ModeController(self, SCATTER)  
+        self.mode = ModeController(self, SCATTER)
         self.color = PURPLE
         self.name = BLINKY
+        self.sprites = GhostSprites(self)  
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:
@@ -183,6 +185,7 @@ class Pinky(Ghost):
         super().__init__(node, pacman)
         self.color = PINK
         self.name = PINKY
+        self.sprites = GhostSprites(self)
 
         
     def update_goal(self):
@@ -202,6 +205,8 @@ class Inky(Ghost):
         self.color = CYAN
         self.blinky = blinky
         self.name = INKY
+        self.sprites = GhostSprites(self)
+
 
 
     def update_goal(self):
@@ -221,6 +226,7 @@ class Clyde(Ghost):
         super().__init__(node, pacman)
         self.color = ORANGE
         self.name = CLYDE
+        self.sprites = GhostSprites(self)
 
     def update_goal(self):
         if self.mode.current_mode is CHASE:

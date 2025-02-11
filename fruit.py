@@ -1,10 +1,12 @@
 import pygame
 from entity import Entity
 from constants import *
+from sprites import FruitSprites
 
 class Fruit(Entity):
     def __init__(self, node):
         Entity.__init__(self, node)
+        self.sprites = FruitSprites(self)
         self.name = FRUIT
         self.color = GREEN
         self.lifespan = 5

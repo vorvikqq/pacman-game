@@ -11,9 +11,11 @@ class SpritesSheet(object):
         height = int(self.sheet.get_height() / BASETILEHEIGHT * TILEHEIGHT)
         self.sheet = pygame.transform.scale(self.sheet, (width, height))
         # according to the constants
-        # the size of the sprite sheet changes -> (20)
+        # the size of the sprite sheet changes 
+        #AND! regardless of the value of TILEWIDTH and TILEHEIGHT, 
+        # sprites will be displayed correctly
 
-    def getImage(self, x, y, width, height):
+    def get_image(self, x, y, width, height):
         """
         method that cuts out a single sprite from a spritesheet
         """
@@ -21,3 +23,51 @@ class SpritesSheet(object):
         y *= TILEHEIGHT
         self.sheet.set_clip(pygame.Rect(x, y, width, height))
         return self.sheet.subsurface(self.sheet.get_clip())
+    
+# Creating separate classes to store 
+# all character part sprites to separate them 
+# from the class class and avoid a sprite table file.
+
+class PacmanSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+
+    def get_start_Image(self):
+        """ 
+        Returns the initial image of Pacman (for start position)
+        """
+        return self.get_image(8, 0)
+        
+    def get_image(self, x, y):
+        """
+        Recives a sprite image from the sprite sheet
+        """
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
+class GhostSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.x = {BLINKY:0, PINKY:2, INKY:4, CLYDE:6}
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+               
+    def get_start_Image(self):
+        return self.get_image(self.x[self.entity.name], 4)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
+class FruitSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+
+    def get_start_Image(self):
+        return self.get_image(16, 8)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
