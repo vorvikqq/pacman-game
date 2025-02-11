@@ -39,6 +39,7 @@ class GameController(object):
     def reset_level(self):
         self.pause.paused = True
         self.textGroup.show_text(READYTXT)
+        self.musicController.play_bg_music()
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
@@ -154,13 +155,14 @@ class GameController(object):
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
 
-                if event.key == K_p:
+                if event.key == K_m:
                     self.musicController.pause_music()
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
             if self.pacman.collide_ghost(ghost):
                 if ghost.mode.current_mode is FREIGHT:
+                    self.musicController.play_pacman_eat_ghost()
                     self.pacman.visible = False
                     ghost.visible = False
                     self.update_score(ghost.points)
@@ -171,6 +173,7 @@ class GameController(object):
                     self.nodes.allowHomeAccess(ghost)
                 elif ghost.mode.current_mode is not SPAWN:
                     if self.pacman.alive:
+                        self.musicController.play_pacman_die()
                         self.lives -= 1
                         self.pacman.die()
                         self.ghosts.hide()
