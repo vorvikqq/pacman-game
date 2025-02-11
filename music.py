@@ -29,6 +29,7 @@ class MusicController():
     def play_pacman_die(self):
         if self.sound_status == True:
             pygame.mixer.music.stop()
+            self.pacman_eat_sound.stop()
             self.pacman_die_sound.play()
 
 

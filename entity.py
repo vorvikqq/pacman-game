@@ -103,7 +103,7 @@ class Entity():
     def reset(self):
         self.set_spawn_node(self.spawn_node)
         self.direction = STOP
-        self.speed = 100
+        self.speed = 100 * TILEWIDTH / 16
         self.visible = True
 
 
