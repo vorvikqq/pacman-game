@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 import numpy as np
+from animation import Animation
 
 class SpritesSheet(object):
     def __init__(self):
@@ -33,6 +34,9 @@ class PacmanSprites(SpritesSheet):
         SpritesSheet.__init__(self)
         self.entity = entity
         self.entity.image = self.get_start_Image()
+        self.animations = {}
+        self.define_ani_for_pacman()
+        self.stop_image = (8, 0)
 
     def get_start_Image(self):
         """ 
@@ -45,6 +49,38 @@ class PacmanSprites(SpritesSheet):
         Recives a sprite image from the sprite sheet
         """
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+    def define_ani_for_pacman(self):
+        """
+        a set of animations for different directions of movement for pacman
+        """
+        self.animations[LEFT] = Animation(((8,0), (0, 0), (0, 2), (0, 0)))
+        self.animations[RIGHT] = Animation(((10,0), (2, 0), (2, 2), (2, 0)))
+        self.animations[UP] = Animation(((10,2), (6, 0), (6, 2), (6, 0)))
+        self.animations[DOWN] = Animation(((8,2), (4, 0), (4, 2), (4, 0)))
+    
+    def update(self, d_time):
+        if self.entity.direction == LEFT:
+            self.entity.image = self.get_image(*self.animations[LEFT].update(d_time))
+            self.stop_image = (8, 0)
+        elif self.entity.direction == RIGHT:
+            self.entity.image = self.get_image(*self.animations[RIGHT].update(d_time))
+            self.stop_image = (10, 0)
+        elif self.entity.direction == DOWN:
+            self.entity.image = self.get_image(*self.animations[DOWN].update(d_time))
+            self.stop_image = (8, 2)
+        elif self.entity.direction == UP:
+            self.entity.image = self.get_image(*self.animations[UP].update(d_time))
+            self.stop_image = (10, 2)
+        elif self.entity.direction == STOP:
+            self.entity.image = self.get_image(*self.stop_image)
+    
+    def reset(self):
+        """
+        Reset all animations to their original state
+        """
+        for key in list(self.animations.keys()):
+            self.animations[key].reset()
 
 class GhostSprites(SpritesSheet):
     def __init__(self, entity):
