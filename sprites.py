@@ -87,3 +87,27 @@ class LifeSprites(SpritesSheet):
 
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+class MazeSprites(SpritesSheet):
+    def __init__(self, mazefile):
+        SpritesSheet.__init__(self)
+        self.data = self.read_mazeFile(mazefile)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, TILEWIDTH, TILEHEIGHT)
+
+    def read_mazeFile(self, mazefile):
+        return np.loadtxt(mazefile, dtype='<U1')
+
+    def construct_background(self, background, y):
+        for row in list(range(self.data.shape[0])):
+            for col in list(range(self.data.shape[1])):
+                if self.data[row][col].isdigit():
+                    x = int(self.data[row][col]) + 12
+                    sprite = self.get_image(x, y)
+                    background.blit(sprite, (col*TILEWIDTH, row*TILEHEIGHT))
+                elif self.data[row][col] == '=':
+                    sprite = self.get_image(10, 8)
+                    background.blit(sprite, (col*TILEWIDTH, row*TILEHEIGHT))
+
+        return background
