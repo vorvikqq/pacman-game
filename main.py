@@ -12,6 +12,7 @@ from music import MusicController
 from sprites import LifeSprites
 from sprites import MazeSprites
 from mazedata import MazeData
+from settings_menu import SettingsMenu
 
 
 class GameController(object):
@@ -36,6 +37,28 @@ class GameController(object):
         self.finishTimer = 0
         self.fruit_captured = []
         self.mazedata = MazeData()
+        
+        self.difficulty_levels = ["Easy", "Medium", "Hard"]
+        self.background_colors = [BLACK, GRAY]
+        self.difficulty = 1 
+        self.bg_color = 0
+
+    def set_difficulty(self, difficulty_level):
+        self.difficulty = difficulty_level
+
+        if self.difficulty == 0:  
+            self.lives = 6
+        elif self.difficulty == 1:  
+            self.lives = 4
+        elif self.difficulty == 2: 
+            self.lives = 3
+
+        self.lifesprites.reset_lives(self.lives) 
+
+
+    def set_background_color(self, color):
+        self.bg_color = color
+
 
     def restart_game(self):
         self.lives = 5
@@ -70,10 +93,10 @@ class GameController(object):
         # self.background = pygame.surface.Surface(SCREENSIZE).convert()
         # self.background.fill(BLACK)
         self.background_norm = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background_norm.fill(BLACK)
+        self.background_norm.fill(self.bg_color)
         self.background_finish = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background_finish.fill(BLACK)
-        self.background_norm = self.mazesprites.construct_background(self.background_norm, self.level%5)
+        self.background_finish.fill(self.bg_color)
+        self.background_norm = self.mazesprites.construct_background(self.background_norm, self.level % 5)
         self.background_finish = self.mazesprites.construct_background(self.background_finish, 5)
         self.finishBG = False
         self.background = self.background_norm
@@ -256,6 +279,24 @@ class GameController(object):
 
 if __name__ == "__main__":
     game = GameController()
-    game.startGame()
-    while True:
-        game.update()
+    settings_menu = SettingsMenu(game)
+
+    running = True
+    in_settings_menu = True 
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                running = False
+            
+            if in_settings_menu:
+                if settings_menu.handle_input(event):
+                    in_settings_menu = False  # Перехід до гри після натискання Enter
+
+        if in_settings_menu:
+            settings_menu.render()  # Відображення меню налаштувань
+        else:
+            # В основному циклі гри, після налаштувань
+            game.update()  # Оновлюємо гру
+
+    pygame.quit()
