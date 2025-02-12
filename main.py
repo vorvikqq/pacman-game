@@ -9,6 +9,8 @@ from ghosts import GhostsGroup
 from pauser import Pause
 from text import TextGroup
 from music import MusicController
+from sprites import LifeSprites
+from sprites import MazeSprites
 
 class GameController(object):
     def __init__(self):
@@ -18,12 +20,19 @@ class GameController(object):
         self.background = None
         self.clock = pygame.time.Clock()
         self.fruit = None
+        self.background_norm = None
+        self.background_finish = None
         self.pause = Pause(True)
         self.level = 0
         self.lives = 5
         self.score = 0
         self.textGroup = TextGroup()
         self.musicController = MusicController()
+        self.lifesprites = LifeSprites(self.lives)
+        self.finishBG = False
+        self.finishTime = 0.2
+        self.finishTimer = 0
+        self.fruit_captured = []
 
     def restart_game(self):
         self.lives = 5
@@ -35,6 +44,8 @@ class GameController(object):
         self.pause.paused = True
         self.fruit = None
         self.startGame()
+        self.lifesprites.reset_lives(self.lives)
+        self.fruit_captured = []
 
     def reset_level(self):
         self.pause.paused = True
@@ -53,12 +64,23 @@ class GameController(object):
         self.startGame()
 
     def setBackground(self):
-        self.background = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background.fill(BLACK)
+        # self.background = pygame.surface.Surface(SCREENSIZE).convert()
+        # self.background.fill(BLACK)
+        self.background_norm = pygame.surface.Surface(SCREENSIZE).convert()
+        self.background_norm.fill(BLACK)
+        self.background_finish = pygame.surface.Surface(SCREENSIZE).convert()
+        self.background_finish.fill(BLACK)
+        self.background_norm = self.mazesprites.construct_background(self.background_norm, self.level%5)
+        self.background_finish = self.mazesprites.construct_background(self.background_finish, 5)
+        self.finishBG = False
+        self.background = self.background_norm
 
     def startGame(self):
+        # self.setBackground()
+        self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
         self.setBackground()
         self.musicController.play_bg_music()
+        # self.background = self.mazesprites.construct_background(self.background, self.level%5)
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
@@ -92,13 +114,26 @@ class GameController(object):
         self.pelletGroup.update(dt)
 
         if not self.pause.paused:
-            self.pacman.update(dt)
+            # self.pacman.update(dt)
             self.ghosts.update(dt)
             if self.fruit is not None:
                 self.fruit.update(dt)
             self.checkPelletEvents()
             self.checkFruitEvents()
             self.checkGhostEvents()
+        if self.pacman.alive:
+            if not self.pause.paused:
+                self.pacman.update(dt)
+        else:
+            self.pacman.update(dt)
+        if self.finishBG:
+            self.finishTimer += dt
+            if self.finishTimer >= self.finishTime:
+                self.finishTimer = 0
+                if self.background == self.background_norm:
+                    self.background = self.background_finish
+                else:
+                    self.background = self.background_norm
         after_pause_method = self.pause.update(dt)
         if after_pause_method is not None:
             after_pause_method()
@@ -118,6 +153,14 @@ class GameController(object):
                 self.musicController.play_pacman_eat_music()
                 self.update_score(self.fruit.points)
                 self.textGroup.add_text(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
+                #перевірка чи походить зображення з того самого місця на файлу картинків
+                fruit_captured = False
+                for fruit in self.fruit_captured:
+                    if fruit.get_offset() == self.fruit.image.get_offset():
+                        fruit_captured = True
+                        break
+                if not fruit_captured:
+                    self.fruit_captured.append(self.fruit.image)
                 self.fruit = None
             elif self.fruit.destroy:
                 self.fruit = None
@@ -136,6 +179,7 @@ class GameController(object):
             if pellet.name == POWERPELLET:
                 self.ghosts.start_freight()
             if self.pelletGroup.is_empty():
+                self.finishBG = True
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
                 self.next_level()
@@ -151,10 +195,11 @@ class GameController(object):
                         self.pause.set_pause(player_paused=True)
                         if not self.pause.paused:
                             self.textGroup.hide_text()
-                            self.show_entities
+                            self.show_entities()
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
+                            # self.show_entities()
 
                 if event.key == K_m:
                     self.musicController.pause_music()
@@ -176,6 +221,7 @@ class GameController(object):
                     if self.pacman.alive:
                         self.musicController.play_pacman_die()
                         self.lives -= 1
+                        self.lifesprites.remove_image()
                         self.pacman.die()
                         self.ghosts.hide()
                         if self.lives <= 0:
@@ -195,13 +241,23 @@ class GameController(object):
     
     def render(self):
         self.screen.blit(self.background, (0, 0))
-        self.nodes.render(self.screen)
+        # self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
         self.textGroup.render(self.screen)
+        for i in range(len(self.lifesprites.images)):
+            x = self.lifesprites.images[i].get_width() * i
+            y = SCREENHEIGHT - self.lifesprites.images[i].get_height()
+            self.screen.blit(self.lifesprites.images[i], (x, y))
+        #відображення фрукта наче життя але фрукта що пакмен його з'їв
+        for i in range(len(self.fruit_captured)):
+            x = SCREENWIDTH - self.fruit_captured[i].get_width() * (i+1)
+            y = SCREENHEIGHT - self.fruit_captured[i].get_height()
+            self.screen.blit(self.fruit_captured[i], (x, y))
+
         pygame.display.update()
 
 if __name__ == "__main__":

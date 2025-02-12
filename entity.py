@@ -25,6 +25,7 @@ class Entity():
         self.home_goal = node
         self.visible = True
         self.set_spawn_node(node)
+        self.image = None
     
     def set_position(self):
         self.position = self.node.position.copy()
@@ -89,8 +90,16 @@ class Entity():
         return False
     
     def render(self, screen):
-        p = self.position.asInt()
-        pygame.draw.circle(screen, self.color, p, self.radius)
+        if self.visible:
+            if self.image is not None:
+                #  screen.blit(self.image, self.position.asTuple())
+                # correct position for enteties in game
+                adjust = Vector(TILEWIDTH, TILEHEIGHT) / 2
+                p = self.position - adjust
+                screen.blit(self.image, p.asTuple())
+            else:
+                p = self.position.asInt()
+                pygame.draw.circle(screen, self.color, p, self.radius)
 
     def setBetweenNodes(self, direction):
         if self.node.neighbors[direction] is not None:
