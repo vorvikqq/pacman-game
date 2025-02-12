@@ -38,7 +38,7 @@ class PacmanSprites(SpritesSheet):
         self.define_ani_for_pacman()
         self.stop_image = (8, 0)
 
-    def get_start_image(self):
+    def get_start_Image(self):
         """ 
         Returns the initial image of Pacman (for start position)
         """
@@ -123,13 +123,15 @@ class GhostSprites(SpritesSheet):
         self.entity.image = self.get_image(*direction_map.get(self.entity.direction, (x, 8)))
 
 class FruitSprites(SpritesSheet):
-    def __init__(self, entity):
+    def __init__(self, entity, level):
         SpritesSheet.__init__(self)
         self.entity = entity
         self.entity.image = self.get_start_Image()
-
-    def get_start_Image(self):
-        return self.get_image(16, 8)
+        self.fruits = {0:(16,8), 1:(18,8), 2:(20,8), 3:(16,10), 4:(18,10), 5:(20,10)}
+        self.entity.image = self.get_start_Image(level % len(self.fruits))
+        
+    def get_start_Image(self, k):
+        return self.get_image(*self.fruits[k])
 
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
