@@ -19,12 +19,17 @@ class GameController(object):
         self.background = None
         self.clock = pygame.time.Clock()
         self.fruit = None
+        self.background_norm = None
+        self.background_finish = None
         self.pause = Pause(True)
         self.level = 0
         self.lives = 5
         self.score = 0
         self.textGroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
+        self.finishBG = False
+        self.finishime = 0.2
+        self.finishTimer = 0
 
     def restart_game(self):
         self.lives = 5
@@ -54,13 +59,21 @@ class GameController(object):
         self.startGame()
 
     def setBackground(self):
-        self.background = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background.fill(BLACK)
+        # self.background = pygame.surface.Surface(SCREENSIZE).convert()
+        # self.background.fill(BLACK)
+        self.background_norm = pygame.surface.Surface(SCREENSIZE).convert()
+        self.background_norm.fill(BLACK)
+        self.background_finish = pygame.surface.Surface(SCREENSIZE).convert()
+        self.background_finish.fill(BLACK)
+        self.background_norm = self.mazesprites.construct_background(self.background_norm, self.level%5)
+        self.background_finish = self.mazesprites.construct_background(self.background_finish, 5)
+        self.finishBG = False
+        self.background = self.background_norm
 
     def startGame(self):
         self.setBackground()
         self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
-        self.background = self.mazesprites.construct_background(self.background, self.level%5)
+        # self.background = self.mazesprites.construct_background(self.background, self.level%5)
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
