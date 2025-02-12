@@ -94,13 +94,18 @@ class GameController(object):
         self.pelletGroup.update(dt)
 
         if not self.pause.paused:
-            self.pacman.update(dt)
+            # self.pacman.update(dt)
             self.ghosts.update(dt)
             if self.fruit is not None:
                 self.fruit.update(dt)
             self.checkPelletEvents()
             self.checkFruitEvents()
             self.checkGhostEvents()
+        if self.pacman.alive:
+            if not self.pause.paused:
+                self.pacman.update(dt)
+        else:
+            self.pacman.update(dt)
         after_pause_method = self.pause.update(dt)
         if after_pause_method is not None:
             after_pause_method()
@@ -155,6 +160,7 @@ class GameController(object):
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
+                            # self.show_entities()
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:

@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 import numpy as np
+from animation import Animation
 
 class SpritesSheet(object):
     def __init__(self):
@@ -32,9 +33,12 @@ class PacmanSprites(SpritesSheet):
     def __init__(self, entity):
         SpritesSheet.__init__(self)
         self.entity = entity
-        self.entity.image = self.get_start_Image()
+        self.entity.image = self.get_start_image()
+        self.animations = {}
+        self.define_ani_for_pacman()
+        self.stop_image = (8, 0)
 
-    def get_start_Image(self):
+    def get_start_image(self):
         """ 
         Returns the initial image of Pacman (for start position)
         """
@@ -45,6 +49,45 @@ class PacmanSprites(SpritesSheet):
         Recives a sprite image from the sprite sheet
         """
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+    def define_ani_for_pacman(self):
+        """
+        a set of animations for different directions of movement for pacman
+        """
+        self.animations[LEFT] = Animation(((8,0), (0, 0), (0, 2), (0, 0)))
+        self.animations[RIGHT] = Animation(((10,0), (2, 0), (2, 2), (2, 0)))
+        self.animations[UP] = Animation(((10,2), (6, 0), (6, 2), (6, 0)))
+        self.animations[DOWN] = Animation(((8,2), (4, 0), (4, 2), (4, 0)))
+        self.animations[DEATH] = Animation(((0, 12), (2, 12), (4, 12), (6, 12), (8, 12), (10, 12), (12, 12), (14, 12), (16, 12), (18, 12), (20, 12)), speed=6, loop=False)
+
+
+    
+    def update(self, d_time):
+        if self.entity.alive == True:
+            direction_map = {
+              LEFT: (self.animations[LEFT], (8, 0)),
+              RIGHT: (self.animations[RIGHT], (10, 0)),
+              DOWN: (self.animations[DOWN], (8, 2)),
+              UP: (self.animations[UP], (10, 2))
+            }
+
+            if self.entity.direction in direction_map:
+               animation, stop_image = direction_map[self.entity.direction]
+               self.entity.image = self.get_image(*animation.update(d_time))
+               self.stop_image = stop_image
+            elif self.entity.direction == STOP:
+               self.entity.image = self.get_image(*self.stop_image)
+        else:
+           self.entity.image = self.get_image(*self.animations[DEATH].update(d_time))
+
+
+    
+    def reset(self):
+        """
+        Reset all animations to their original state
+        """
+        for key in list(self.animations.keys()):
+            self.animations[key].reset()
 
 class GhostSprites(SpritesSheet):
     def __init__(self, entity):
@@ -58,6 +101,26 @@ class GhostSprites(SpritesSheet):
 
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+    #add ani (ani picture) for ghost
+    def update(self):
+        x = self.x[self.entity.name]
+
+        if self.entity.mode.current_mode == FREIGHT:
+           self.entity.image = self.get_image(10, 4)
+           return
+
+        if self.entity.mode.current_mode == SPAWN:
+           x = 8  # Для режиму SPAWN всі привиди мають один і той же X
+        
+        direction_map = {
+          LEFT: (x, 8),
+          RIGHT: (x, 10),
+          DOWN: (x, 6),
+          UP: (x, 4),
+        }
+        # Встановлюємо зображення відповідно до напрямку руху
+        self.entity.image = self.get_image(*direction_map.get(self.entity.direction, (x, 8)))
 
 class FruitSprites(SpritesSheet):
     def __init__(self, entity):

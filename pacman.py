@@ -35,6 +35,8 @@ class Pacman(Entity):
         self.direction = LEFT
         self.setBetweenNodes(LEFT)
         self.alive = True
+        self.image = self.sprites.get_start_image()
+        self.sprites.reset()
     
     def die(self):
         self.alive = False
@@ -44,6 +46,7 @@ class Pacman(Entity):
     #     self.position = self.node.position.copy()
 
     def update(self, dt):
+        self.sprites.update(dt)
         self.position += self.directions[self.direction] * self.speed * dt 
         direction = self.getValidKey()
         if self.overshot_target():

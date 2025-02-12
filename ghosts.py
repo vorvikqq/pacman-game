@@ -62,6 +62,7 @@ class Ghost(Entity):
     """
     def update(self, dt):
         self.position += self.directions[self.direction] * self.speed * dt
+        self.sprites.update()
         self.mode.update(dt)
 
         if self.overshot_target():
