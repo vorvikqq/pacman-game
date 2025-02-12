@@ -35,6 +35,8 @@ class Pacman(Entity):
         self.direction = LEFT
         self.setBetweenNodes(LEFT)
         self.alive = True
+        self.image = self.sprites.get_start_image()
+        self.sprites.reset()
     
     def die(self):
         self.alive = False

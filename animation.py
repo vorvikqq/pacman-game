@@ -1,7 +1,7 @@
 from constants import *
 
 class Animation(object):
-    def __init__(self, frames=[], speed=40, loop=True):
+    def __init__(self, frames=[], speed=30, loop=True):
         self.frames = frames
         self.current_frame = 0
         self.speed = speed
