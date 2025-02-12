@@ -28,7 +28,7 @@ class GameController(object):
         self.textGroup = TextGroup()
         self.lifesprites = LifeSprites(self.lives)
         self.finishBG = False
-        self.finishime = 0.2
+        self.finishTime = 0.2
         self.finishTimer = 0
 
     def restart_game(self):
@@ -119,6 +119,14 @@ class GameController(object):
                 self.pacman.update(dt)
         else:
             self.pacman.update(dt)
+        if self.finishBG:
+            self.finishTimer += dt
+            if self.finishTimer >= self.finishTime:
+                self.finishTimer = 0
+                if self.background == self.background_norm:
+                    self.background = self.background_finish
+                else:
+                    self.background = self.background_norm
         after_pause_method = self.pause.update(dt)
         if after_pause_method is not None:
             after_pause_method()
@@ -154,6 +162,7 @@ class GameController(object):
             if pellet.name == POWERPELLET:
                 self.ghosts.start_freight()
             if self.pelletGroup.is_empty():
+                self.finishBG = True
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
                 self.next_level()
