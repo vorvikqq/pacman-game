@@ -11,6 +11,8 @@ from text import TextGroup
 from music import MusicController
 from sprites import LifeSprites
 from sprites import MazeSprites
+from mazedata import MazeData
+
 
 class GameController(object):
     def __init__(self):
@@ -33,6 +35,7 @@ class GameController(object):
         self.finishTime = 0.2
         self.finishTimer = 0
         self.fruit_captured = []
+        self.mazedata = MazeData()
 
     def restart_game(self):
         self.lives = 5
@@ -76,37 +79,28 @@ class GameController(object):
         self.background = self.background_norm
 
     def startGame(self):
-        # self.setBackground()
-        self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
+        self.mazedata.load_maze(self.level)
+        self.mazesprites = MazeSprites(self.mazedata.obj.name+".txt", self.mazedata.obj.name+"_rotation.txt")
         self.setBackground()
         self.musicController.play_bg_music()
         # self.background = self.mazesprites.construct_background(self.background, self.level%5)
-        self.nodes = NodeGroup("mazetest.txt")
-        self.pelletGroup = PelletGroup("mazetest.txt")
-        self.nodes.setPortalPair((0, 17), (27, 17))
-        
-        homekey = self.nodes.createHomeNodes(11.5, 14)
-        self.nodes.connectHomeNodes(homekey, (12,14), LEFT)
-        self.nodes.connectHomeNodes(homekey, (15,14), RIGHT)
+        self.nodes = NodeGroup(self.mazedata.obj.name+".txt")
+        self.mazedata.obj.set_portal_pairs(self.nodes)
+        self.mazedata.obj.connect_home_nodes(self.nodes)
 
-        self.pacman = Pacman(self.nodes.getNodeFromTiles(15, 26))
+        self.pacman = Pacman(self.nodes.getNodeFromTiles(*self.mazedata.obj.pacman_start))
+        self.pelletGroup = PelletGroup(self.mazedata.obj.name+".txt")
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
-        self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 14))
-        self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(2+11.5, 3+14))
-        self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(0+11.5, 3+14))
-        self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(4+11.5, 3+14))
-
+        self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(2, 3)))
+        self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(0, 3)))
+        self.ghosts.clyde.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(4, 3)))
+        self.ghosts.blinky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(2, 0)))
 
         self.nodes.denyHomeAccess(self.pacman)
         self.nodes.denyHomeAccessList(self.ghosts)
-        self.nodes.denyAccessList(2 + 11.5, 3 + 14, LEFT, self.ghosts)
-        self.nodes.denyAccessList(2 + 11.5, 3 + 14, RIGHT, self.ghosts)
         self.ghosts.inky.spawn_node.denyAccess(RIGHT, self.ghosts.inky)
         self.ghosts.clyde.spawn_node.denyAccess(LEFT, self.ghosts.clyde)
-        self.nodes.denyAccessList(12, 14, UP, self.ghosts)
-        self.nodes.denyAccessList(15, 14, UP, self.ghosts)
-        self.nodes.denyAccessList(12, 26, UP, self.ghosts)
-        self.nodes.denyAccessList(15, 26, UP, self.ghosts)
+        self.mazedata.obj.deny_ghosts_access(self.ghosts, self.nodes)
 
     def update(self):
         dt = self.clock.tick(60) / 1000.0

@@ -29,7 +29,7 @@ class MazeBase:
 
 class Maze1(MazeBase):
   def __init__(self) -> None:
-    super().__init__(self)
+    MazeBase.__init__(self)
     self.name = "maze1"
     self.portal_pairs =  {0:((0, 17), (27, 17))}
     self.home_offset = (11.5, 14)
@@ -52,4 +52,12 @@ class Maze2(MazeBase):
         self.fruit_start = (11, 20)
         self.ghost_node_deny = {UP:((9, 14), (18, 14), (11, 23), (16, 23)), LEFT:(self.add_offset(2, 3),),
                               RIGHT:(self.add_offset(2, 3),)}
+
         
+class MazeData:
+  def __init__(self) -> None:
+    self.obj = None
+    self.maze_dict = {0:Maze1, 1:Maze2}
+
+  def load_maze(self, level):
+    self.obj = self.maze_dict[level%len(self.maze_dict)]()
