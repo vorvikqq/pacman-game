@@ -20,22 +20,22 @@ class Ghost(Entity):
 
     def update_move_method(self):
         if self.mode.current_mode is SCATTER:
-            self.set_speed(100)
+            self.set_speed(110)
             self.move_method = self.scatter_movement
             # self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
-            self.set_speed(100)
+            self.set_speed(110)
             self.move_method = self.goal_movement
             # self.color = BLUE
 
         elif self.mode.current_mode is WAIT:
-            self.set_speed(100)
+            self.set_speed(110)
             self.move_method = self.wait_movement
             # self.color = WHITE
 
         elif self.mode.current_mode is RANDOM:
-            self.set_speed(100)
+            self.set_speed(110)
             self.move_method = self.random_movement
             # self.color = GREEN
 

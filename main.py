@@ -8,6 +8,7 @@ from fruit import Fruit
 from ghosts import GhostsGroup
 from pauser import Pause
 from text import TextGroup
+from music import MusicController
 from sprites import LifeSprites
 from sprites import MazeSprites
 
@@ -26,6 +27,7 @@ class GameController(object):
         self.lives = 5
         self.score = 0
         self.textGroup = TextGroup()
+        self.musicController = MusicController()
         self.lifesprites = LifeSprites(self.lives)
         self.finishBG = False
         self.finishTime = 0.2
@@ -48,6 +50,7 @@ class GameController(object):
     def reset_level(self):
         self.pause.paused = True
         self.textGroup.show_text(READYTXT)
+        self.musicController.play_bg_music()
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
@@ -76,6 +79,7 @@ class GameController(object):
         # self.setBackground()
         self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
         self.setBackground()
+        self.musicController.play_bg_music()
         # self.background = self.mazesprites.construct_background(self.background, self.level%5)
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
@@ -146,6 +150,7 @@ class GameController(object):
                 self.fruit = Fruit(self.nodes.getNodeFromTiles(9, 20))
         if self.fruit is not None:
             if self.pacman.collideCheck(self.fruit):
+                self.musicController.play_pacman_eat_music()
                 self.update_score(self.fruit.points)
                 self.textGroup.add_text(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
                 #перевірка чи походить зображення з того самого місця на файлу картинків
@@ -164,6 +169,7 @@ class GameController(object):
         pellet = self.pacman.eatPellets(self.pelletGroup.pellets)
         if pellet:
             self.pelletGroup.num_eaten += 1
+            self.musicController.play_pacman_eat_music()
             self.update_score(pellet.points)
             if self.pelletGroup.num_eaten == 30:
                 self.ghosts.inky.spawn_node.allowAccess(RIGHT, self.ghosts.inky)
@@ -195,10 +201,14 @@ class GameController(object):
                             self.hide_entities()
                             # self.show_entities()
 
+                if event.key == K_m:
+                    self.musicController.pause_music()
+
     def checkGhostEvents(self):
         for ghost in self.ghosts:
             if self.pacman.collide_ghost(ghost):
                 if ghost.mode.current_mode is FREIGHT:
+                    self.musicController.play_pacman_eat_ghost()
                     self.pacman.visible = False
                     ghost.visible = False
                     self.update_score(ghost.points)
@@ -209,6 +219,7 @@ class GameController(object):
                     self.nodes.allowHomeAccess(ghost)
                 elif ghost.mode.current_mode is not SPAWN:
                     if self.pacman.alive:
+                        self.musicController.play_pacman_die()
                         self.lives -= 1
                         self.lifesprites.remove_image()
                         self.pacman.die()
