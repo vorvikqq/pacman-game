@@ -92,7 +92,11 @@ class Entity():
     def render(self, screen):
         if self.visible:
             if self.image is not None:
-                 screen.blit(self.image, self.position.asTuple())
+                #  screen.blit(self.image, self.position.asTuple())
+                # correct position for enteties in game
+                adjust = Vector(TILEWIDTH, TILEHEIGHT) / 2
+                p = self.position - adjust
+                screen.blit(self.image, p.asTuple())
             else:
                 p = self.position.asInt()
                 pygame.draw.circle(screen, self.color, p, self.radius)
