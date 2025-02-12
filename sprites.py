@@ -1,0 +1,89 @@
+import pygame
+from constants import *
+import numpy as np
+
+class SpritesSheet(object):
+    def __init__(self):
+        self.sheet = pygame.image.load("spritesheet.png").convert()
+        transcolor = self.sheet.get_at((0,0))
+        self.sheet.set_colorkey(transcolor) #take color that made that transparent
+        width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
+        height = int(self.sheet.get_height() / BASETILEHEIGHT * TILEHEIGHT)
+        self.sheet = pygame.transform.scale(self.sheet, (width, height))
+        # according to the constants
+        # the size of the sprite sheet changes 
+        #AND! regardless of the value of TILEWIDTH and TILEHEIGHT, 
+        # sprites will be displayed correctly
+
+    def get_image(self, x, y, width, height):
+        """
+        method that cuts out a single sprite from a spritesheet
+        """
+        x *= TILEWIDTH
+        y *= TILEHEIGHT
+        self.sheet.set_clip(pygame.Rect(x, y, width, height))
+        return self.sheet.subsurface(self.sheet.get_clip())
+    
+# Creating separate classes to store 
+# all character part sprites to separate them 
+# from the class class and avoid a sprite table file.
+
+class PacmanSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+
+    def get_start_Image(self):
+        """ 
+        Returns the initial image of Pacman (for start position)
+        """
+        return self.get_image(8, 0)
+        
+    def get_image(self, x, y):
+        """
+        Recives a sprite image from the sprite sheet
+        """
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
+class GhostSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.x = {BLINKY:0, PINKY:2, INKY:4, CLYDE:6}
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+               
+    def get_start_Image(self):
+        return self.get_image(self.x[self.entity.name], 4)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
+class FruitSprites(SpritesSheet):
+    def __init__(self, entity):
+        SpritesSheet.__init__(self)
+        self.entity = entity
+        self.entity.image = self.get_start_Image()
+
+    def get_start_Image(self):
+        return self.get_image(16, 8)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+
+class LifeSprites(SpritesSheet):
+    def __init__(self, numlives):
+        SpritesSheet.__init__(self)
+        self.reset_lives(numlives)
+    
+    def remove_image(self):
+        if len(self.images) > 0:
+            self.images.pop(0)
+
+    def reset_lives(self, numlives):
+        self.images = []
+        for i in range(numlives):
+            self.images.append(self.get_image(0,0))
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)

@@ -8,6 +8,7 @@ from fruit import Fruit
 from ghosts import GhostsGroup
 from pauser import Pause
 from text import TextGroup
+from sprites import LifeSprites
 
 class GameController(object):
     def __init__(self):
@@ -22,6 +23,7 @@ class GameController(object):
         self.lives = 5
         self.score = 0
         self.textGroup = TextGroup()
+        self.lifesprites = LifeSprites(self.lives)
 
     def restart_game(self):
         self.lives = 5
@@ -33,6 +35,7 @@ class GameController(object):
         self.pause.paused = True
         self.fruit = None
         self.startGame()
+        self.lifesprites.reset_lives(self.lives)
 
     def reset_level(self):
         self.pause.paused = True
@@ -145,7 +148,7 @@ class GameController(object):
                         self.pause.set_pause(player_paused=True)
                         if not self.pause.paused:
                             self.textGroup.hide_text()
-                            self.show_entities
+                            self.show_entities()
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
@@ -165,6 +168,7 @@ class GameController(object):
                 elif ghost.mode.current_mode is not SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1
+                        self.lifesprites.remove_image()
                         self.pacman.die()
                         self.ghosts.hide()
                         if self.lives <= 0:
@@ -191,6 +195,10 @@ class GameController(object):
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
         self.textGroup.render(self.screen)
+        for i in range(len(self.lifesprites.images)):
+            x = self.lifesprites.images[i].get_width() * i
+            y = SCREENHEIGHT - self.lifesprites.images[i].get_height()
+            self.screen.blit(self.lifesprites.images[i], (x, y))
         pygame.display.update()
 
 if __name__ == "__main__":
