@@ -14,7 +14,7 @@ class Animation(object):
         self.is_finished = False
 
     def update(self, dt):
-        if not self.finished:
+        if not self.is_finished:
             self.next_frame(dt)
         if self.current_frame == len(self.frames):#якщо досягається останнього кадру
             if self.loop:
