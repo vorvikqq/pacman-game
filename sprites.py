@@ -94,6 +94,18 @@ class GhostSprites(SpritesSheet):
 
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+    #add ani (ani picture) for ghost
+    def update(self):
+        x = self.x[self.entity.name]
+        if self.entity.direction == LEFT:
+            self.entity.image = self.get_image(x, 8)
+        elif self.entity.direction == RIGHT:
+            self.entity.image = self.get_image(x, 10)
+        elif self.entity.direction == DOWN:
+            self.entity.image = self.get_image(x, 6)
+        elif self.entity.direction == UP:
+            self.entity.image = self.get_image(x, 4)
 
 class FruitSprites(SpritesSheet):
     def __init__(self, entity):

@@ -155,6 +155,7 @@ class GameController(object):
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
+                            # self.show_entities()
 
     def checkGhostEvents(self):
         for ghost in self.ghosts:
