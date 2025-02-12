@@ -33,7 +33,7 @@ class PacmanSprites(SpritesSheet):
     def __init__(self, entity):
         SpritesSheet.__init__(self)
         self.entity = entity
-        self.entity.image = self.get_start_image()
+        self.entity.image = self.get_start_Image()
         self.animations = {}
         self.define_ani_for_pacman()
         self.stop_image = (8, 0)
