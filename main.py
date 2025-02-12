@@ -30,6 +30,7 @@ class GameController(object):
         self.finishBG = False
         self.finishTime = 0.2
         self.finishTimer = 0
+        self.fruit_captured = []
 
     def restart_game(self):
         self.lives = 5
@@ -42,6 +43,7 @@ class GameController(object):
         self.fruit = None
         self.startGame()
         self.lifesprites.reset_lives(self.lives)
+        self.fruit_captured = []
 
     def reset_level(self):
         self.pause.paused = True
@@ -146,6 +148,14 @@ class GameController(object):
             if self.pacman.collideCheck(self.fruit):
                 self.update_score(self.fruit.points)
                 self.textGroup.add_text(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
+                #перевірка чи походить зображення з того самого місця на файлу картинків
+                fruit_captured = False
+                for fruit in self.fruit_captured:
+                    if fruit.get_offset() == self.fruit.image.get_offset():
+                        fruit_captured = True
+                        break
+                if not fruit_captured:
+                    self.fruit_captured.append(self.fruit.image)
                 self.fruit = None
             elif self.fruit.destroy:
                 self.fruit = None
@@ -231,6 +241,12 @@ class GameController(object):
             x = self.lifesprites.images[i].get_width() * i
             y = SCREENHEIGHT - self.lifesprites.images[i].get_height()
             self.screen.blit(self.lifesprites.images[i], (x, y))
+        #відображення фрукта наче життя але фрукта що пакмен його з'їв
+        for i in range(len(self.fruit_captured)):
+            x = SCREENWIDTH - self.fruit_captured[i].get_width() * (i+1)
+            y = SCREENHEIGHT - self.fruit_captured[i].get_height()
+            self.screen.blit(self.fruit_captured[i], (x, y))
+
         pygame.display.update()
 
 if __name__ == "__main__":
