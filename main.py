@@ -9,6 +9,7 @@ from ghosts import GhostsGroup
 from pauser import Pause
 from text import TextGroup
 from sprites import LifeSprites
+from sprites import MazeSprites
 
 class GameController(object):
     def __init__(self):
@@ -58,6 +59,8 @@ class GameController(object):
 
     def startGame(self):
         self.setBackground()
+        self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
+        self.background = self.mazesprites.construct_background(self.background, self.level%5)
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
         self.nodes.setPortalPair((0, 17), (27, 17))
@@ -188,7 +191,7 @@ class GameController(object):
     
     def render(self):
         self.screen.blit(self.background, (0, 0))
-        self.nodes.render(self.screen)
+        # self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)

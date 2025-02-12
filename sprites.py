@@ -87,3 +87,33 @@ class LifeSprites(SpritesSheet):
 
     def get_image(self, x, y):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
+    
+class MazeSprites(SpritesSheet):
+    def __init__(self, mazefile, rot_file):
+        SpritesSheet.__init__(self)
+        self.data = self.read_mazeFile(mazefile)
+        self.rot_data = self.read_mazeFile(rot_file)
+
+    def get_image(self, x, y):
+        return SpritesSheet.get_image(self, x, y, TILEWIDTH, TILEHEIGHT)
+
+    def read_mazeFile(self, mazefile):
+        return np.loadtxt(mazefile, dtype='<U1')
+
+    def construct_background(self, background, y):
+        for row in list(range(self.data.shape[0])):
+            for col in list(range(self.data.shape[1])):
+                if self.data[row][col].isdigit():
+                    x = int(self.data[row][col]) + 12
+                    sprite = self.get_image(x, y)
+                    rot_val = int(self.rot_data[row][col])#get val for rotate 
+                    sprite = self.rotate(sprite, rot_val)#give it val for out sprite object
+                    background.blit(sprite, (col*TILEWIDTH, row*TILEHEIGHT))
+                elif self.data[row][col] == '=':
+                    sprite = self.get_image(10, 8)
+                    background.blit(sprite, (col*TILEWIDTH, row*TILEHEIGHT))
+
+        return background
+    
+    def rotate(self, sprite, value):
+       return pygame.transform.rotate(sprite, value*90)#each time miltiply by 90
