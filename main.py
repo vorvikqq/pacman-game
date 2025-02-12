@@ -71,8 +71,9 @@ class GameController(object):
         self.background = self.background_norm
 
     def startGame(self):
-        self.setBackground()
+        # self.setBackground()
         self.mazesprites = MazeSprites("mazetest.txt", "mazetest_rot.txt")
+        self.setBackground()
         # self.background = self.mazesprites.construct_background(self.background, self.level%5)
         self.nodes = NodeGroup("mazetest.txt")
         self.pelletGroup = PelletGroup("mazetest.txt")
