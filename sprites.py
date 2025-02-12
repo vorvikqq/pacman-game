@@ -60,20 +60,19 @@ class PacmanSprites(SpritesSheet):
         self.animations[DOWN] = Animation(((8,2), (4, 0), (4, 2), (4, 0)))
     
     def update(self, d_time):
-        if self.entity.direction == LEFT:
-            self.entity.image = self.get_image(*self.animations[LEFT].update(d_time))
-            self.stop_image = (8, 0)
-        elif self.entity.direction == RIGHT:
-            self.entity.image = self.get_image(*self.animations[RIGHT].update(d_time))
-            self.stop_image = (10, 0)
-        elif self.entity.direction == DOWN:
-            self.entity.image = self.get_image(*self.animations[DOWN].update(d_time))
-            self.stop_image = (8, 2)
-        elif self.entity.direction == UP:
-            self.entity.image = self.get_image(*self.animations[UP].update(d_time))
-            self.stop_image = (10, 2)
+        direction_map = {
+        LEFT: (self.animations[LEFT], (8, 0)),
+        RIGHT: (self.animations[RIGHT], (10, 0)),
+        DOWN: (self.animations[DOWN], (8, 2)),
+        UP: (self.animations[UP], (10, 2))
+        }
+
+        if self.entity.direction in direction_map:
+           animation, stop_image = direction_map[self.entity.direction]
+           self.entity.image = self.get_image(*animation.update(d_time))
+           self.stop_image = stop_image
         elif self.entity.direction == STOP:
-            self.entity.image = self.get_image(*self.stop_image)
+           self.entity.image = self.get_image(*self.stop_image)
     
     def reset(self):
         """
@@ -98,14 +97,22 @@ class GhostSprites(SpritesSheet):
     #add ani (ani picture) for ghost
     def update(self):
         x = self.x[self.entity.name]
-        if self.entity.direction == LEFT:
-            self.entity.image = self.get_image(x, 8)
-        elif self.entity.direction == RIGHT:
-            self.entity.image = self.get_image(x, 10)
-        elif self.entity.direction == DOWN:
-            self.entity.image = self.get_image(x, 6)
-        elif self.entity.direction == UP:
-            self.entity.image = self.get_image(x, 4)
+
+        if self.entity.mode.current_mode == FREIGHT:
+           self.entity.image = self.get_image(10, 4)
+           return
+
+        if self.entity.mode.current_mode == SPAWN:
+           x = 8  # Для режиму SPAWN всі привиди мають один і той же X
+        
+        direction_map = {
+          LEFT: (x, 8),
+          RIGHT: (x, 10),
+          DOWN: (x, 6),
+          UP: (x, 4),
+        }
+        # Встановлюємо зображення відповідно до напрямку руху
+        self.entity.image = self.get_image(*direction_map.get(self.entity.direction, (x, 8)))
 
 class FruitSprites(SpritesSheet):
     def __init__(self, entity):
