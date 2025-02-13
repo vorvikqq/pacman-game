@@ -3,6 +3,15 @@ from constants import *
 class Animation(object):
     """
     Represents an animation consisting of multiple frames.
+
+    Attributes:
+        name (str): The type of entity (FRUIT).
+        color (tuple): The color of the fruit.
+        lifespan (int): The time (in seconds) before the fruit disappears.
+        timer (float): Tracks the elapsed time since the fruit appeared.
+        destroy (bool): Indicates whether the fruit should be removed.
+        points (int): The score awarded when the fruit is collected.
+        sprites (FruitSprites): The sprite representation of the fruit.
     """
     def __init__(self, frames=[], speed=30, loop=True):
         """
