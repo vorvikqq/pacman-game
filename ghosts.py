@@ -8,7 +8,9 @@ from modes import ModeController
 from sprites import GhostSprites
 
 class Ghost(Entity):
-
+    """
+    Base class for all ghost entities in the game. Handles movement, modes, and interactions with Pacman
+    """
     def __init__(self, node, pacman):
         super().__init__(node)
         self.name = GHOST
@@ -19,25 +21,24 @@ class Ghost(Entity):
         self.update_move_method()
 
     def update_move_method(self):
+        """
+        Updates the movement method based on the ghost's current mode
+        """
         if self.mode.current_mode is SCATTER:
             self.set_speed(110)
             self.move_method = self.scatter_movement
-            # self.color = ORANGE
 
         elif self.mode.current_mode is CHASE:
             self.set_speed(110)
             self.move_method = self.goal_movement
-            # self.color = BLUE
 
         elif self.mode.current_mode is WAIT:
             self.set_speed(110)
             self.move_method = self.wait_movement
-            # self.color = WHITE
 
         elif self.mode.current_mode is RANDOM:
             self.set_speed(110)
             self.move_method = self.random_movement
-            # self.color = GREEN
 
         elif self.mode.current_mode is FREIGHT:
             self.set_speed(50)
@@ -48,6 +49,9 @@ class Ghost(Entity):
             self.move_method = self.spawn_movement
 
     def update_goal(self):
+        """
+        Updates the goal position of the ghost based on its current mode
+        """
         if self.mode.current_mode is CHASE:
             self.goal = self.pacman.node.position
 
@@ -55,12 +59,10 @@ class Ghost(Entity):
             self.goal = self.scatter_goal
 
 
-        
-    """
-        Method which overrides Entity(update) method and basically contorls movement of ghost
-        Technically, for now ghosts move fully random
-    """
     def update(self, dt):
+        """
+        Updates ghost movement and mode control
+        """
         self.position += self.directions[self.direction] * self.speed * dt
         self.sprites.update()
         self.mode.update(dt)
@@ -85,13 +87,13 @@ class Ghost(Entity):
             self.set_position()
 
         self.update_goal()
-        
-    """
+
+    def valid_directions_list(self):
+        """
         Method for getting all avaliable directions for ghost to move
 
-        returns a list of all possible directions to go 
-    """
-    def valid_directions_list(self):
+        Returns: a list of all possible directions to go 
+        """
         directions = []
         for key in [UP, DOWN, LEFT, RIGHT]:
             if self.valid_direction(key):
@@ -101,19 +103,22 @@ class Ghost(Entity):
             directions.append(self.direction * -1)
         return directions
     
-    """
+
+    def random_movement(self, directions):
+        """
         Method for getting a random direction from list
 
-        returns random element from given directions list
-    """
-    def random_movement(self, directions):
+        Returns: random element from given directions list
+        """
+            
         return directions[randint(0, len(directions) - 1)]
-    """
-        Method for getting a closest direction to pacman that calculates the less direction to pacmans current position
 
-        returns a closest direction to pacman
-    """
     def goal_movement(self, directions):
+        """
+        Method for getting the best direction from list to chase Pacman
+
+        Returns the direction that minimizes the distance to the goal
+        """
         distances = []
 
         for direction in directions:
@@ -124,32 +129,56 @@ class Ghost(Entity):
         return directions[index]
     
     def wait_movement(self, directions):
+        """
+        Returns opposite direction
+        """
         return self.direction * -1
     
     def scatter_movement(self, directions):
+        """
+        Returns goal_movement method with directions list
+        """
         return self.goal_movement(directions)
     
     def freight_movement(self, directions):
+        """
+        Returns random_movement method with directions list
+        """
         return self.random_movement(directions)
     
     def spawn_movement(self, directions):
+        """
+        Returns random_movement method with directions list
+        """
         return self.goal_movement(directions)
     
     def start_freight(self):
+        """
+        Puts the ghost into freight mode
+        """
         self.mode.set_freight_mode()
         if self.mode.current_mode == FREIGHT:
             self.set_speed(50)
             self.move_method = self.random_movement
     
     def normal_mode(self):
+        """
+        Puts the ghost into normal mode
+        """
         self.set_speed(100)
         self.move_method = self.goal_movement
         self.spawn_node.denyAccess(DOWN, self)
     
     def spawn(self):
+        """
+        Sets ghosts home goal
+        """
         self.goal = self.home_goal
 
     def start_spawn(self):
+        """
+        Starts spawn mode for ghost
+        """
         self.mode.set_spawn_mode()
         if self.mode.current_mode == SPAWN:
             self.set_speed(150)
@@ -157,13 +186,18 @@ class Ghost(Entity):
             self.spawn()
 
     def reset(self):
+        """
+        Resets the ghost to its initial state
+        """
         Entity.reset(self)
         self.points = 200
         self.move_method = self.goal_movement
 
 
-
 class Blinky(Ghost):
+    """
+    Blinky is the red ghost that directly chases Pacman
+    """
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
         self.mode = ModeController(self, SCATTER)
@@ -182,6 +216,9 @@ class Blinky(Ghost):
             self.goal = self.home_goal
 
 class Pinky(Ghost):
+    """
+    Pinky predicts Pacman's movement and moves 4 tiles ahead 
+    """
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
         self.color = PINK
@@ -201,6 +238,9 @@ class Pinky(Ghost):
             self.goal = self.home_goal
 
 class Inky(Ghost):
+    """
+    Inky's behavior depends on both Pacman and Blinky's positions
+    """
     def __init__(self, node, pacman, blinky = None):
         super().__init__(node, pacman)
         self.color = CYAN
@@ -223,6 +263,9 @@ class Inky(Ghost):
 
 
 class Clyde(Ghost):
+    """
+    Clyde moves towards Pacman but runs away if he's 8 tiles close to him
+    """
     def __init__(self, node, pacman):
         super().__init__(node, pacman)
         self.color = ORANGE
@@ -250,6 +293,9 @@ class Clyde(Ghost):
 
 
 class GhostsGroup():
+    """
+    Manages all ghost entities in the game
+    """
     def __init__(self, node, pacman):
         self.blinky = Blinky(node, pacman)
         self.pinky = Pinky(node, pacman)
