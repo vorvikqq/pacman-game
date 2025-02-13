@@ -5,16 +5,17 @@ from constants import *
 class SettingsMenu:
     def __init__(self, game_controller):
         self.game_controller = game_controller
-        self.font = pygame.font.SysFont("Arial", 30)
         self.selected_option = 0
+        self.font = pygame.font.Font('PressStart2P-Regular.ttf', 15)
         self.difficulty_levels = ["Easy", "Medium", "Hard"]
-        self.background_colors = ['Black', 'Gray']
+        self.background_colors = ['Black', 'Gray', 'Navy']
         self.options = [
             f"Difficulty: {self.difficulty_levels[self.game_controller.difficulty]}",
             f"Background Color: {self.background_colors[self.game_controller.bg_color]}"
         ]
         self.difficulty = self.game_controller.difficulty
         self.bg_color = self.game_controller.bg_color
+        
 
     def render(self):
         self.game_controller.screen.fill((0, 0, 0))

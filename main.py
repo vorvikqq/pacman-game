@@ -39,7 +39,7 @@ class GameController(object):
         self.mazedata = MazeData()
         
         self.difficulty_levels = ["Easy", "Medium", "Hard"]
-        self.background_colors = [BLACK, GRAY]
+        self.background_colors = [BLACK, GRAY, NAVY]
         self.difficulty = 1 
         self.bg_color = 0
 
@@ -199,7 +199,6 @@ class GameController(object):
                 self.finishBG = True
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
-                self.next_level()
 
     
     def checkEvents(self):
