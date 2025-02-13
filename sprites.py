@@ -5,7 +5,7 @@ from animation import Animation
 
 class SpritesSheet(object):
     def __init__(self):
-        self.sheet = pygame.image.load("spritesheet.png").convert()
+        self.sheet = pygame.image.load("images/spritesheet.png").convert()
         transcolor = self.sheet.get_at((0,0))
         self.sheet.set_colorkey(transcolor) #take color that made that transparent
         width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)

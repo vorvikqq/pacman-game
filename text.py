@@ -14,7 +14,7 @@ class Text():
         self.position = Vector(x, y)
         self.timer = 0
         self.label = None
-        self.setup_font("PressStart2P-Regular.ttf")
+        self.setup_font("fonts/PressStart2P-Regular.ttf")
         self.create_label()
 
     def setup_font(self, font_name):

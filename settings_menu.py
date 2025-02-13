@@ -6,7 +6,7 @@ class SettingsMenu:
     def __init__(self, game_controller):
         self.game_controller = game_controller
         self.selected_option = 0
-        self.font = pygame.font.Font('PressStart2P-Regular.ttf', 15)
+        self.font = pygame.font.Font('fonts/PressStart2P-Regular.ttf', 15)
         self.difficulty_levels = ["Easy", "Medium", "Hard"]
         self.background_colors = ['Black', 'Gray', 'Navy']
         self.options = [

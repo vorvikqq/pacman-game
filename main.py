@@ -90,8 +90,6 @@ class GameController(object):
         self.startGame()
 
     def setBackground(self):
-        # self.background = pygame.surface.Surface(SCREENSIZE).convert()
-        # self.background.fill(BLACK)
         self.background_norm = pygame.surface.Surface(SCREENSIZE).convert()
         self.background_norm.fill(self.bg_color)
         self.background_finish = pygame.surface.Surface(SCREENSIZE).convert()
@@ -103,16 +101,15 @@ class GameController(object):
 
     def startGame(self):
         self.mazedata.load_maze(self.level)
-        self.mazesprites = MazeSprites(self.mazedata.obj.name+".txt", self.mazedata.obj.name+"_rotation.txt")
+        self.mazesprites = MazeSprites('mazes/' +self.mazedata.obj.name+".txt",'mazes/' + self.mazedata.obj.name+"_rotation.txt")
         self.setBackground()
         self.musicController.play_bg_music()
-        # self.background = self.mazesprites.construct_background(self.background, self.level%5)
-        self.nodes = NodeGroup(self.mazedata.obj.name+".txt")
+        self.nodes = NodeGroup('mazes/' +self.mazedata.obj.name+".txt")
         self.mazedata.obj.set_portal_pairs(self.nodes)
         self.mazedata.obj.connect_home_nodes(self.nodes)
 
         self.pacman = Pacman(self.nodes.getNodeFromTiles(*self.mazedata.obj.pacman_start))
-        self.pelletGroup = PelletGroup(self.mazedata.obj.name+".txt")
+        self.pelletGroup = PelletGroup('mazes/' + self.mazedata.obj.name+".txt")
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
         self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(2, 3)))
         self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(0, 3)))
@@ -131,7 +128,6 @@ class GameController(object):
         self.pelletGroup.update(dt)
 
         if not self.pause.paused:
-            # self.pacman.update(dt)
             self.ghosts.update(dt)
             if self.fruit is not None:
                 self.fruit.update(dt)
@@ -215,7 +211,6 @@ class GameController(object):
                         else:
                             self.textGroup.show_text(PAUSETXT)
                             self.hide_entities()
-                            # self.show_entities()
 
                 if event.key == K_m:
                     self.musicController.pause_music()
@@ -257,7 +252,6 @@ class GameController(object):
     
     def render(self):
         self.screen.blit(self.background, (0, 0))
-        # self.nodes.render(self.screen)
         self.pelletGroup.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)
