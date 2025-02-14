@@ -1,12 +1,32 @@
 from constants import *
 
 class DefaultMode():
-    def __init__(self, start_mode = WAIT):  
+    """
+    Handles the default behavior of a ghost's movement modes.
+    
+    Attributes:
+        timer (float): Tracks time elapsed in the current mode.
+        mode (str): Current mode of the ghost.
+        time (float): Duration of the current mode before switching.
+    """
+    def __init__(self, start_mode=WAIT):  
+        """
+        Initializes the mode system with a starting mode.
+        
+        Args:
+            start_mode (str): The initial mode of the ghost.
+        """
         self.timer = 0
         self.mode = None
         self.set_mode(start_mode)
 
     def update(self, dt):
+        """
+        Updates the mode timer and switches modes when necessary.
+        
+        Args:
+            dt (float): Time since the last update.
+        """
         self.timer += dt
 
         if self.timer >= self.time:
@@ -16,34 +36,36 @@ class DefaultMode():
                 self.chase()
             elif self.mode == CHASE:
                 self.scatter()
-
             elif self.mode == RANDOM:
                 self.scatter()
-                
             elif self.mode == FREIGHT:
                 self.scatter()
-
             elif self.mode == SPAWN:
                 self.wait()
     
     def reset_mode(self):
-        """Повертає привида в стандартний режим (CHASE або SCATTER)"""
-        # Якщо привид зараз в режимі FREIGHT або іншому режимі, повертаємо до SCATTER або CHASE
-        if self.mode.current_mode == FREIGHT:
-            # Можна обрати між SCATTER та CHASE, залежно від поточної ситуації
-            self.mode.set_mode(SCATTER)  # або CHASE, якщо треба
-        elif self.mode.current_mode == WAIT:
-            self.mode.set_mode(SCATTER)  # можна за умовами гри встановити інший початковий режим
+        """
+        Resets the ghost to either SCATTER or CHASE mode.
+        """
+        if self.mode == FREIGHT:
+            self.set_mode(SCATTER)  
+        elif self.mode == WAIT:
+            self.set_mode(SCATTER)
 
     def normal_mode(self):
-        """Відновлює нормальну швидкість та режим для привида"""
-        # Встановлюємо стандартну швидкість привида, наприклад, 100
+        """
+        Restores normal speed and movement behavior.
+        """
         self.speed = self.set_speed(100)
-
-        # Визначаємо метод руху залежно від поточного режиму
         self.update_move_method()
 
     def set_mode(self, mode):  
+        """
+        Changes the current mode.
+        
+        Args:
+            mode (str): The new mode to set.
+        """
         if mode == SCATTER:
             self.scatter()
         elif mode == CHASE:
@@ -87,10 +109,25 @@ class DefaultMode():
         self.time = 5  
         self.timer = 0
 
-    
-
 class ModeController():
-    def __init__(self, ghost, start_mode = WAIT):
+    """
+    Manages the mode transitions and updates for a ghost.
+    
+    Attributes:
+        time (float): Timer tracking duration of current mode.
+        timer (float): Secondary timer for tracking FREIGHT mode.
+        main_mode (DefaultMode): The main mode handler.
+        current_mode (str): The currently active mode.
+        ghost (Ghost): The ghost instance associated with this controller.
+    """
+    def __init__(self, ghost, start_mode=WAIT):
+        """
+        Initializes the mode controller.
+        
+        Args:
+            ghost (Ghost): The ghost whose mode is controlled.
+            start_mode (str): The initial mode for the ghost.
+        """
         self.time = 0
         self.timer = 0
         self.main_mode = DefaultMode(start_mode)
@@ -98,6 +135,12 @@ class ModeController():
         self.ghost = ghost
 
     def update(self, dt):
+        """
+        Updates the ghost's mode and movement behavior.
+        
+        Args:
+            dt (float): Time since last update.
+        """
         self.main_mode.update(dt)
         self.current_mode = self.main_mode.mode  
         self.ghost.update_move_method()
@@ -105,36 +148,44 @@ class ModeController():
         if self.current_mode == SPAWN and self.ghost.node.position == self.ghost.home_goal:
             self.main_mode.set_mode(WAIT)
 
-        if self.current_mode is FREIGHT:
+        if self.current_mode == FREIGHT:
             self.timer += dt
             if self.timer >= self.time:
                 self.time = None
                 self.ghost.normal_mode()
                 self.current_mode = self.main_mode.mode
         elif self.current_mode in [SCATTER, CHASE]:
-            self.current_mode =  self.main_mode.mode
-        if self.current_mode is SPAWN:
-            if self.ghost.node == self.ghost.spawn_node:
-                self.ghost.normal_mode()
-                self.current_mode = self.main_mode.mode
-
-            
+            self.current_mode = self.main_mode.mode
+        
+        if self.current_mode == SPAWN and self.ghost.node == self.ghost.spawn_node:
+            self.ghost.normal_mode()
+            self.current_mode = self.main_mode.mode
 
     def set_mode(self, mode):
-        """Динамічно змінює режим привида"""
+        """
+        Changes the mode dynamically.
+        
+        Args:
+            mode (str): The new mode to set.
+        """
         self.main_mode.set_mode(mode)
-        self.current_mode = self.main_mode.mode  # Оновлюємо поточний режим
-        self.ghost.update_move_method()  # Оновлюємо метод руху відповідно до нового режиму
+        self.current_mode = self.main_mode.mode
+        self.ghost.update_move_method()
 
     def set_freight_mode(self):
-        """Вмикає режим страху (FREIGHT), якщо привид у SCATTER або CHASE"""
+        """
+        Activates the frightened (FREIGHT) mode if the ghost is in SCATTER or CHASE.
+        """
         if self.current_mode in [SCATTER, CHASE]:  
             self.timer = 0
             self.time = 7
             self.set_mode(FREIGHT)
-        elif self.current_mode is FREIGHT:
+        elif self.current_mode == FREIGHT:
             self.timer = 0
     
     def set_spawn_mode(self):
-        if self.current_mode is FREIGHT:
-           self.set_mode(SPAWN)
+        """
+        Switches the ghost to SPAWN mode if currently in FREIGHT mode.
+        """
+        if self.current_mode == FREIGHT:
+            self.set_mode(SPAWN)
