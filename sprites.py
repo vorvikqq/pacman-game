@@ -4,7 +4,16 @@ import numpy as np
 from animation import Animation
 
 class SpritesSheet(object):
+    """
+    Represents a sprite sheet containing multiple game sprites.
+    
+    Attributes:
+        sheet (pygame.Surface): The loaded and processed sprite sheet.
+    """
     def __init__(self):
+        """
+        Loads and processes the sprite sheet, adjusting its size according to the game's tile dimensions.
+        """
         self.sheet = pygame.image.load("images/spritesheet.png").convert()
         transcolor = self.sheet.get_at((0,0))
         self.sheet.set_colorkey(transcolor) #take color that made that transparent
@@ -18,7 +27,7 @@ class SpritesSheet(object):
 
     def get_image(self, x, y, width, height):
         """
-        method that cuts out a single sprite from a spritesheet
+        Extracts a single sprite from the sprite sheet.
         """
         x *= TILEWIDTH
         y *= TILEHEIGHT
@@ -30,7 +39,18 @@ class SpritesSheet(object):
 # from the class class and avoid a sprite table file.
 
 class PacmanSprites(SpritesSheet):
+    """
+    Manages Pacman's sprite animations.
+    
+    Attributes:
+        entity: The Pacman entity.
+        animations (dict): A dictionary mapping directions to animations.
+        stop_image (tuple): Coordinates of the stop image.
+    """
     def __init__(self, entity):
+        """
+        Initializes the sprite manager for Pacman.
+        """
         SpritesSheet.__init__(self)
         self.entity = entity
         self.entity.image = self.get_start_Image()
@@ -39,8 +59,8 @@ class PacmanSprites(SpritesSheet):
         self.stop_image = (8, 0)
 
     def get_start_Image(self):
-        """ 
-        Returns the initial image of Pacman (for start position)
+        """
+        Returns the initial Pacman image for the starting position.
         """
         return self.get_image(8, 0)
         
@@ -52,7 +72,7 @@ class PacmanSprites(SpritesSheet):
     
     def define_ani_for_pacman(self):
         """
-        a set of animations for different directions of movement for pacman
+        Defines animations for Pacman's movement in different directions.
         """
         self.animations[LEFT] = Animation(((8,0), (0, 0), (0, 2), (0, 0)))
         self.animations[RIGHT] = Animation(((10,0), (2, 0), (2, 2), (2, 0)))
@@ -63,6 +83,9 @@ class PacmanSprites(SpritesSheet):
 
     
     def update(self, d_time):
+        """
+        Updates Pacman's animation based on its movement direction.
+        """
         if self.entity.alive == True:
             direction_map = {
               LEFT: (self.animations[LEFT], (8, 0)),
@@ -90,7 +113,17 @@ class PacmanSprites(SpritesSheet):
             self.animations[key].reset()
 
 class GhostSprites(SpritesSheet):
+    """
+    Manages the sprites and animations for ghosts.
+    
+    Attributes:
+        entity: The ghost entity.
+        x (dict): Mapping of ghost types to sprite sheet positions.
+    """
     def __init__(self, entity):
+        """
+        Loads and processes the sprite sheet, adjusting its size according to the game's tile dimensions.
+        """
         SpritesSheet.__init__(self)
         self.x = {BLINKY:0, PINKY:2, INKY:4, CLYDE:6}
         self.entity = entity
@@ -111,7 +144,7 @@ class GhostSprites(SpritesSheet):
            return
 
         if self.entity.mode.current_mode == SPAWN:
-           x = 8  # Для режиму SPAWN всі привиди мають один і той же X
+           x = 8  
         
         direction_map = {
           LEFT: (x, 8),
@@ -119,14 +152,20 @@ class GhostSprites(SpritesSheet):
           DOWN: (x, 6),
           UP: (x, 4),
         }
-        # Встановлюємо зображення відповідно до напрямку руху
+        
         self.entity.image = self.get_image(*direction_map.get(self.entity.direction, (x, 8)))
 
 class FruitSprites(SpritesSheet):
+    """
+    Manages the sprites for fruits in the game.
+    
+    Attributes:
+        entity: The fruit entity.
+        fruits (dict): Mapping of fruit types to sprite sheet positions.
+    """
     def __init__(self, entity, level):
         SpritesSheet.__init__(self)
         self.entity = entity
-        # self.entity.image = self.get_start_Image(level)
         self.fruits = {0:(16,8), 1:(18,8), 2:(20,8), 3:(16,10), 4:(18,10), 5:(20,10)}
         self.entity.image = self.get_start_Image(level % len(self.fruits))
         
@@ -137,6 +176,12 @@ class FruitSprites(SpritesSheet):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
 
 class LifeSprites(SpritesSheet):
+    """
+    Manages the life indicators displayed on the screen.
+    
+    Attributes:
+        images (list): List of life images.
+    """
     def __init__(self, numlives):
         SpritesSheet.__init__(self)
         self.reset_lives(numlives)
@@ -146,6 +191,7 @@ class LifeSprites(SpritesSheet):
             self.images.pop(0)
 
     def reset_lives(self, numlives):
+        """Resets the life display with the given number of lives."""
         self.images = []
         for i in range(numlives):
             self.images.append(self.get_image(0,0))
@@ -154,6 +200,13 @@ class LifeSprites(SpritesSheet):
         return SpritesSheet.get_image(self, x, y, 2*TILEWIDTH, 2*TILEHEIGHT)
     
 class MazeSprites(SpritesSheet):
+    """
+    Manages the maze sprite rendering.
+    
+    Attributes:
+        data (ndarray): The structure of the maze.
+        rot_data (ndarray): Rotation values for each tile.
+    """
     def __init__(self, mazefile, rot_file):
         SpritesSheet.__init__(self)
         self.data = self.read_mazeFile(mazefile)
@@ -163,9 +216,11 @@ class MazeSprites(SpritesSheet):
         return SpritesSheet.get_image(self, x, y, TILEWIDTH, TILEHEIGHT)
 
     def read_mazeFile(self, mazefile):
+        """Reads the maze layout from a file."""
         return np.loadtxt(mazefile, dtype='<U1')
 
     def construct_background(self, background, y):
+        """Constructs the maze background by placing tiles at the correct positions."""
         for row in list(range(self.data.shape[0])):
             for col in list(range(self.data.shape[1])):
                 if self.data[row][col].isdigit():
@@ -181,4 +236,5 @@ class MazeSprites(SpritesSheet):
         return background
     
     def rotate(self, sprite, value):
+       """Rotates the sprite by a multiple of 90 degrees."""
        return pygame.transform.rotate(sprite, value*90)#each time miltiply by 90
