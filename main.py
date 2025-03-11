@@ -1,5 +1,5 @@
 import pygame
-from pygame.locals import *
+from pygame.constants import *
 from constants import *
 from pacman import Pacman
 from nodes import NodeGroup
