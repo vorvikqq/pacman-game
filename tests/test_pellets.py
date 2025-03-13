@@ -67,3 +67,34 @@ class TestPowerPellet:
         power_pellet.update(0.2)
         assert power_pellet.visible == initial_visible
         assert power_pellet.timer == 0.2
+
+class TestPelletGroup:
+    def test_init(self, pellet_group):
+        assert isinstance(pellet_group.pellets, list)
+        assert isinstance(pellet_group.power_pellets, list)
+        assert pellet_group.num_eaten == 0
+        assert len(pellet_group.pellets) == 30
+        assert len(pellet_group.power_pellets) == 1
+
+    def test_update(self, pellet_group):
+        with patch.object(PowerPellet, 'update') as mock_update:
+            pellet_group.update(0.1)
+            assert mock_update.call_count == len(pellet_group.power_pellets)
+
+    def test_read_pellet_file(self, pellet_group, tmp_path):
+        data = ". . . .\nP . . .\n. . . ."
+        p = tmp_path / "test.txt"
+        p.write_text(data)
+        result = pellet_group.read_pellet_file(str(p))
+        assert isinstance(result, np.ndarray)
+        assert result.shape == (3, 4), f"Очікувана форма (3, 4), отримано {result.shape}"
+
+    def test_is_empty(self, pellet_group):
+        assert not pellet_group.is_empty()
+        pellet_group.pellets.clear()
+        assert pellet_group.is_empty()
+
+    def test_render(self, pellet_group, screen):
+        with patch.object(Pellet, 'render') as mock_render:
+            pellet_group.render(screen)
+            assert mock_render.call_count == len(pellet_group.pellets)
