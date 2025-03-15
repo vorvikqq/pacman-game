@@ -129,9 +129,14 @@ class TextGroup():
         Returns:
             int: The unique identifier of the added text.
         """
-        self.alltext[self.nextid] = Text(text, color, x, y, size, time=time, id=id)
-        self.nextid += 1
-        return self.nextid
+        if id is not None:
+            self.alltext[id] = Text(text, color, x, y, size, time=time, id=id)
+            added_id = id
+        else:
+            self.alltext[self.nextid] = Text(text, color, x, y, size, time=time, id=id)
+            added_id = self.nextid
+            self.nextid += 1
+        return added_id
         
     def remove_text(self, id):
         """
