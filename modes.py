@@ -52,13 +52,6 @@ class DefaultMode():
         elif self.mode == WAIT:
             self.set_mode(SCATTER)
 
-    def normal_mode(self):
-        """
-        Restores normal speed and movement behavior.
-        """
-        self.speed = self.set_speed(100)
-        self.update_move_method()
-
     def set_mode(self, mode):  
         """
         Changes the current mode.
