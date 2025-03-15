@@ -118,7 +118,6 @@ class GameController(object):
         """
         self.pause.paused = True
         self.textGroup.show_text(READYTXT)
-        self.musicController.play_bg_music()
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
