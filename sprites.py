@@ -10,11 +10,15 @@ class SpritesSheet(object):
     Attributes:
         sheet (pygame.Surface): The loaded and processed sprite sheet.
     """
-    def __init__(self):
+    def __init__(self, image=None):
         """
         Loads and processes the sprite sheet, adjusting its size according to the game's tile dimensions.
         """
-        self.sheet = pygame.image.load("images/spritesheet.png").convert()
+        if image:
+            self.sheet = image
+        else:
+            self.sheet = pygame.image.load("images/spritesheet.png").convert()
+            
         transcolor = self.sheet.get_at((0,0))
         self.sheet.set_colorkey(transcolor) #take color that made that transparent
         width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
