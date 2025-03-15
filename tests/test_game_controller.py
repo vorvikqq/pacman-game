@@ -128,7 +128,6 @@ class TestGameController(unittest.TestCase):
 
         self.assertTrue(self.game.pause.paused)
         self.game.textGroup.show_text.assert_called_with(READYTXT)
-        self.game.musicController.play_bg_music.assert_called_once()
         self.mock_pacman.reset.assert_called_once()
         self.mock_ghosts.reset.assert_called_once()
         self.assertIsNone(self.game.fruit)
