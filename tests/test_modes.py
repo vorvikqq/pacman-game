@@ -4,12 +4,13 @@ from constants import *
 from modes import ModeController, DefaultMode
 from vector import Vector
 
+
 class TestDefaultMode:
     def test_init(self):
         mode = DefaultMode(start_mode=WAIT)
         assert mode.mode == WAIT
         assert mode.timer == 0
-        assert mode.time == 3 
+        assert mode.time == 3
 
     def test_set_mode(self):
         mode = DefaultMode()
@@ -34,11 +35,11 @@ class TestDefaultMode:
 
         mode.update(1.5)
         assert mode.timer == 1.5
-        assert mode.mode == WAIT  
+        assert mode.mode == WAIT
 
         mode.update(2.0)
-        assert mode.mode == SCATTER  
-        assert mode.timer == 0  
+        assert mode.mode == SCATTER
+        assert mode.timer == 0
 
     def test_reset_mode(self):
         mode = DefaultMode(start_mode=FREIGHT)
@@ -50,6 +51,7 @@ class TestDefaultMode:
         mode.reset_mode()
         assert mode.mode == SCATTER
 
+
 @pytest.fixture
 def mock_ghost():
     ghost = Mock()
@@ -60,6 +62,7 @@ def mock_ghost():
     ghost.home_goal = Vector(100, 100)
     ghost.spawn_node = Mock()
     return ghost
+
 
 class TestModeController:
     def test_init(self, mock_ghost):
@@ -74,11 +77,11 @@ class TestModeController:
 
         controller.update(1.5)
         assert controller.main_mode.timer == 1.5
-        assert controller.current_mode == WAIT  
+        assert controller.current_mode == WAIT
 
         controller.update(2.0)
-        assert controller.current_mode == SCATTER 
-        assert controller.main_mode.timer == 0  
+        assert controller.current_mode == SCATTER
+        assert controller.main_mode.timer == 0
 
     def test_set_mode(self, mock_ghost):
         controller = ModeController(mock_ghost)
@@ -97,7 +100,7 @@ class TestModeController:
 
         controller.set_mode(SPAWN)
         controller.set_freight_mode()
-        assert controller.current_mode == SPAWN  
+        assert controller.current_mode == SPAWN
 
     def test_set_spawn_mode(self, mock_ghost):
         controller = ModeController(mock_ghost, start_mode=FREIGHT)
@@ -107,6 +110,4 @@ class TestModeController:
 
         controller.set_mode(CHASE)
         controller.set_spawn_mode()
-        assert controller.current_mode == CHASE 
-
-        
+        assert controller.current_mode == CHASE

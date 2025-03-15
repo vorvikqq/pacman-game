@@ -1,7 +1,7 @@
-import pygame
 from entity import Entity
 from constants import *
 from sprites import FruitSprites
+
 
 class Fruit(Entity):
     """
@@ -16,10 +16,11 @@ class Fruit(Entity):
             points (int): The score awarded when the fruit is collected.
             sprites (FruitSprites): The sprite representation of the fruit.
     """
+
     def __init__(self, node, level=0):
         """
         Initializes a fruit entity.
-        
+
         Args:
             node (Node): The initial position of the fruit.
             level (int): The game level, affecting the fruit's point value.
@@ -30,14 +31,14 @@ class Fruit(Entity):
         self.lifespan = 5
         self.timer = 0
         self.destroy = False
-        self.points = 100 + level*20
+        self.points = 100 + level * 20
         self.setBetweenNodes(RIGHT)
         self.sprites = FruitSprites(self, level)
 
     def update(self, dt):
         """
         Updates the fruit's state based on elapsed time.
-        
+
         Args:
             dt (float): Time elapsed since the last update.
         """

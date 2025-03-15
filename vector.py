@@ -1,5 +1,6 @@
 import math
 
+
 class Vector(object):
     """
     Represents a 2D vector with basic vector operations.

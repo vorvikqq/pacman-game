@@ -18,13 +18,13 @@ class TestPause:
     def test_initialization(self, pause):
         assert pause.paused == False
         assert pause.timer == 0
-        assert pause.pause_time == None
-        assert pause.func == None
+        assert pause.pause_time is None
+        assert pause.func is None
 
     def test_set_pause(self, pause, mock_func):
         pause.set_pause(player_paused=True, pause_time=5, func=mock_func)
 
-        assert pause.paused == True
+        assert pause.paused
         assert pause.pause_time == 5
         assert pause.func == mock_func
         assert pause.timer == 0
@@ -32,7 +32,7 @@ class TestPause:
     def test_toggle_pause(self, pause):
         assert pause.paused == False
         pause.flip()
-        assert pause.paused == True
+        assert pause.paused
         pause.flip()
         assert pause.paused == False
 
@@ -46,7 +46,7 @@ class TestPause:
 
         result = pause.update(3)
         assert result is None
-        assert pause.paused == True
+        assert pause.paused
         assert pause.timer == 3
 
         result = pause.update(2)
@@ -57,14 +57,14 @@ class TestPause:
     def test_set_pause_with_no_time(self, pause, mock_func):
         pause.set_pause(player_paused=True, pause_time=None, func=mock_func)
 
-        assert pause.paused == True
+        assert pause.paused
         assert pause.func == mock_func
-        assert pause.pause_time == None
+        assert pause.pause_time is None
 
     def test_update_during_no_time_pause(self, pause):
         pause.set_pause(player_paused=True, pause_time=None, func=None)
 
         result = pause.update(1)
         assert result is None
-        assert pause.paused == True
+        assert pause.paused
         assert pause.timer == 0

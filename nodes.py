@@ -3,6 +3,7 @@ from vector import Vector
 from constants import *
 import numpy as np
 
+
 class Node:
     """
     Class representing a node in the maze graph.
@@ -54,6 +55,7 @@ class Node:
                 line_end = self.neighbors[n].position.asTuple()
                 pygame.draw.line(screen, WHITE, line_start, line_end, 4)
                 pygame.draw.circle(screen, RED, self.position.asInt(), 12)
+
 
 class NodeGroup(object):
     """
@@ -107,16 +109,16 @@ class NodeGroup(object):
         :param yoffset: Y-coordinate offset for positioning the home.
         :return: Key representing the home node.
         """
-        homedata = np.array([['X','X','+','X','X'],
-                             ['X','X','.','X','X'],
-                             ['+','X','.','X','+'],
-                             ['+','.','+','.','+'],
-                             ['+','X','X','X','+']])
+        homedata = np.array([['X', 'X', '+', 'X', 'X'],
+                             ['X', 'X', '.', 'X', 'X'],
+                             ['+', 'X', '.', 'X', '+'],
+                             ['+', '.', '+', '.', '+'],
+                             ['+', 'X', 'X', 'X', '+']])
 
         self.createNodeTable(homedata, xoffset, yoffset)
         self.connectHorizontally(homedata, xoffset, yoffset)
         self.connectVertically(homedata, xoffset, yoffset)
-        self.homekey = self.constructKey(xoffset+2, yoffset)
+        self.homekey = self.constructKey(xoffset + 2, yoffset)
         return self.homekey
 
     def connectHomeNodes(self, homekey, otherkey, direction):
@@ -129,7 +131,7 @@ class NodeGroup(object):
         """
         key = self.constructKey(*otherkey)
         self.nodesLUT[homekey].neighbors[direction] = self.nodesLUT[key]
-        self.nodesLUT[key].neighbors[direction*-1] = self.nodesLUT[homekey]
+        self.nodesLUT[key].neighbors[direction * -1] = self.nodesLUT[homekey]
 
     def constructKey(self, x, y):
         """

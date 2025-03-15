@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from vector import Vector
 from constants import *
-from random import randint
+
 
 class Entity():
     """
@@ -24,6 +24,7 @@ class Entity():
         spawn_node (Node): Initial node where the entity spawns.
         image (pygame.Surface): Image used to render the entity.
     """
+
     def __init__(self, node):
         """
         Initializes an Entity object with a starting node.
@@ -33,14 +34,14 @@ class Entity():
         """
         self.name = ""
         self.directions = {
-          STOP : Vector(),
-          UP: Vector(0,-1),
-          DOWN : Vector(0,1),
-          LEFT : Vector(-1,0),
-          RIGHT : Vector(1,0)
+            STOP: Vector(),
+            UP: Vector(0, -1),
+            DOWN: Vector(0, 1),
+            LEFT: Vector(-1, 0),
+            RIGHT: Vector(1, 0)
         }
         self.direction = STOP
-        self.speed = 100 * TILEWIDTH/16
+        self.speed = 100 * TILEWIDTH / 16
         self.collide_radius = 5
         self.radius = 10
         self.color = WHITE
@@ -51,13 +52,13 @@ class Entity():
         self.visible = True
         self.set_spawn_node(node)
         self.image = None
-    
+
     def set_position(self):
         """
         Sets the position of the entity to the current node's position.
         """
         self.position = self.node.position.copy()
-    
+
     def set_spawn_node(self, given_node):
         """
         Sets the spawn node and resets the entity's position.
@@ -87,7 +88,7 @@ class Entity():
                 if self.node.neighbors[direction] is not None:
                     return True
         return False
-    
+
     def valid_directions_list(self):
         """
         Returns a list of valid movement directions.
@@ -134,7 +135,7 @@ class Entity():
             node2_self = vec2.magnitudeSquared()
             return node2_self >= node2_target
         return False
-    
+
     def reverse_direction(self):
         """
         Reverses the movement direction of the entity.
@@ -143,7 +144,7 @@ class Entity():
         temp = self.node
         self.node = self.target
         self.target = temp
-    
+
     def opposite_direction(self, direction):
         """
         Checks if the given direction is the opposite of the current direction.
@@ -158,7 +159,7 @@ class Entity():
             if direction == self.direction * -1:
                 return True
         return False
-    
+
     def render(self, screen):
         """
         Renders the entity on the screen.
@@ -194,7 +195,7 @@ class Entity():
             speed (float): The new speed value.
         """
         self.speed = speed * TILEWIDTH / 16
-    
+
     def reset(self):
         """
         Resets the entity to its spawn node with default values.

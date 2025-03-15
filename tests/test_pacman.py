@@ -9,6 +9,7 @@ from constants import *
 
 pygame.init()
 
+
 @pytest.fixture
 def node():
     node = Mock(spec=Node)
@@ -16,10 +17,12 @@ def node():
     node.neighbors = {LEFT: None, RIGHT: None, UP: None, DOWN: None, PORTAL: None}
     return node
 
+
 @pytest.fixture
 def pacman(node):
     with patch('pacman.PacmanSprites'):
         return Pacman(node)
+
 
 @pytest.fixture
 def pellet():
@@ -28,12 +31,14 @@ def pellet():
     pellet.collide_radius = 5
     return pellet
 
+
 @pytest.fixture
 def ghost():
     ghost = Mock()
     ghost.position = Vector(0, 0)
     ghost.collide_radius = 5
     return ghost
+
 
 class TestPacman:
     def test_init(self, pacman, node):
@@ -44,7 +49,7 @@ class TestPacman:
         assert pacman.color == YELLOW
         assert pacman.node == node
         assert pacman.target == node
-        assert pacman.alive == True
+        assert pacman.alive
         assert pacman.sprites is not None
 
     def test_reset(self, pacman):
@@ -53,7 +58,7 @@ class TestPacman:
         with patch.object(pacman.sprites, 'reset') as mock_reset:
             pacman.reset()
             assert pacman.direction == LEFT
-            assert pacman.alive == True
+            assert pacman.alive
             mock_reset.assert_called_once()
 
     def test_die(self, pacman):
@@ -122,12 +127,12 @@ class TestPacman:
         pacman.position = Vector(0, 0)
         pacman.collide_radius = 10
         result = pacman.collide_ghost(ghost)
-        assert result == True
+        assert result
 
     def test_collide_check(self, pacman, pellet):
         pacman.position = Vector(0, 0)
         pacman.collide_radius = 10
-        assert pacman.collideCheck(pellet) == True
+        assert pacman.collideCheck(pellet)
 
         pacman.position = Vector(20, 20)  # Далеко
         assert pacman.collideCheck(pellet) == False

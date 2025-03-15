@@ -18,7 +18,7 @@ from settings_menu import SettingsMenu
 class GameController(object):
     """
     Main controller for the Pac-Man game.
-    
+
     Attributes:
         screen (pygame.Surface): Main game screen.
         background (pygame.Surface): Current background surface.
@@ -41,6 +41,7 @@ class GameController(object):
         difficulty (int): Selected difficulty level.
         bg_color (int): Selected background color.
     """
+
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
@@ -64,37 +65,35 @@ class GameController(object):
         self.mazedata = MazeData()
         self.difficulty_levels = ["Easy", "Medium", "Hard"]
         self.background_colors = [BLACK, GRAY, NAVY]
-        self.difficulty = 1 
+        self.difficulty = 1
         self.bg_color = 0
 
     def set_difficulty(self, difficulty_level):
         """
         Sets the game difficulty and adjusts lives accordingly.
-        
+
         Args:
             difficulty_level (int): Difficulty index (0 = Easy, 1 = Medium, 2 = Hard).
         """
         self.difficulty = difficulty_level
 
-        if self.difficulty == 0:  
+        if self.difficulty == 0:
             self.lives = 6
-        elif self.difficulty == 1:  
+        elif self.difficulty == 1:
             self.lives = 4
-        elif self.difficulty == 2: 
+        elif self.difficulty == 2:
             self.lives = 3
 
-        self.lifesprites.reset_lives(self.lives) 
-
+        self.lifesprites.reset_lives(self.lives)
 
     def set_background_color(self, color):
         """
         Sets the background color of the game.
-        
+
         Args:
             color (int): Index of background color in background_colors list.
         """
         self.bg_color = color
-
 
     def restart_game(self):
         """
@@ -122,7 +121,6 @@ class GameController(object):
         self.ghosts.reset()
         self.fruit = None
 
-
     def next_level(self):
         """
         Advances to the next level.
@@ -137,8 +135,8 @@ class GameController(object):
         """
         Sets the background surfaces for the game.
 
-        This method creates two background surfaces: one for normal gameplay and one for 
-        the finishing sequence. Both are filled with the selected background color and then 
+        This method creates two background surfaces: one for normal gameplay and one for
+        the finishing sequence. Both are filled with the selected background color and then
         updated using the maze sprites to add level-specific visual elements.
         """
         self.background_norm = pygame.surface.Surface(SCREENSIZE).convert()
@@ -154,19 +152,19 @@ class GameController(object):
         """
         Initializes and starts a new game level.
 
-        This method sets up the maze, loads necessary game objects such as Pac-Man, ghosts, 
+        This method sets up the maze, loads necessary game objects such as Pac-Man, ghosts,
         pellets, and nodes, and applies various constraints to regulate ghost behavior.
         """
         self.mazedata.load_maze(self.level)
-        self.mazesprites = MazeSprites('mazes/' +self.mazedata.obj.name+".txt",'mazes/' + self.mazedata.obj.name+"_rotation.txt")
+        self.mazesprites = MazeSprites('mazes/' + self.mazedata.obj.name + ".txt", 'mazes/' + self.mazedata.obj.name + "_rotation.txt")
         self.setBackground()
         self.musicController.play_bg_music()
-        self.nodes = NodeGroup('mazes/' +self.mazedata.obj.name+".txt")
+        self.nodes = NodeGroup('mazes/' + self.mazedata.obj.name + ".txt")
         self.mazedata.obj.set_portal_pairs(self.nodes)
         self.mazedata.obj.connect_home_nodes(self.nodes)
 
         self.pacman = Pacman(self.nodes.getNodeFromTiles(*self.mazedata.obj.pacman_start))
-        self.pelletGroup = PelletGroup('mazes/' + self.mazedata.obj.name+".txt")
+        self.pelletGroup = PelletGroup('mazes/' + self.mazedata.obj.name + ".txt")
         self.ghosts = GhostsGroup(self.nodes.getStartTempNode(), self.pacman)
         self.ghosts.pinky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(2, 3)))
         self.ghosts.inky.set_spawn_node(self.nodes.getNodeFromTiles(*self.mazedata.obj.add_offset(0, 3)))
@@ -212,11 +210,11 @@ class GameController(object):
             after_pause_method()
         self.checkEvents()
         self.render()
-    
+
     def update_score(self, points):
         """
         Updates the player's score.
-        
+
         Args:
             points (int): Points to add to the score.
         """
@@ -235,7 +233,7 @@ class GameController(object):
                 self.musicController.play_pacman_eat_music()
                 self.update_score(self.fruit.points)
                 self.textGroup.add_text(str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, time=1)
-                
+
                 # Ensure the captured fruit is stored only if it is unique
                 fruit_captured = False
                 for fruit in self.fruit_captured:
@@ -247,7 +245,6 @@ class GameController(object):
                 self.fruit = None
             elif self.fruit.destroy:
                 self.fruit = None
-
 
     def checkPelletEvents(self):
         """
@@ -274,7 +271,6 @@ class GameController(object):
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
 
-
     def checkEvents(self):
         """
         Handles player input and general game events.
@@ -295,7 +291,6 @@ class GameController(object):
 
                 if event.key == K_m:
                     self.musicController.pause_music()
-
 
     def checkGhostEvents(self):
         """
@@ -326,7 +321,6 @@ class GameController(object):
                         else:
                             self.pause.set_pause(pause_time=3, func=self.reset_level)
 
-
     def show_entities(self):
         """
         Makes Pac-Man and ghosts visible.
@@ -334,14 +328,13 @@ class GameController(object):
         self.pacman.visible = True
         self.ghosts.show()
 
-
     def hide_entities(self):
         """
         Hides Pac-Man and ghosts from the screen.
         """
         self.pacman.visible = False
         self.ghosts.hide()
-    
+
     def render(self):
         """
         Renders all game objects onto the screen.
@@ -358,31 +351,32 @@ class GameController(object):
             y = SCREENHEIGHT - self.lifesprites.images[i].get_height()
             self.screen.blit(self.lifesprites.images[i], (x, y))
         for i in range(len(self.fruit_captured)):
-            x = SCREENWIDTH - self.fruit_captured[i].get_width() * (i+1)
+            x = SCREENWIDTH - self.fruit_captured[i].get_width() * (i + 1)
             y = SCREENHEIGHT - self.fruit_captured[i].get_height()
             self.screen.blit(self.fruit_captured[i], (x, y))
 
         pygame.display.update()
+
 
 if __name__ == "__main__":
     game = GameController()
     settings_menu = SettingsMenu(game)
 
     running = True
-    in_settings_menu = True 
+    in_settings_menu = True
 
     while running:
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
-            
+
             if in_settings_menu:
                 if settings_menu.handle_input(event):
-                    in_settings_menu = False  
+                    in_settings_menu = False
 
         if in_settings_menu:
-            settings_menu.render()  
+            settings_menu.render()
         else:
-            game.update()  
+            game.update()
 
     pygame.quit()

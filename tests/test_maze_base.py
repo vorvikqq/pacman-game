@@ -3,9 +3,11 @@ from unittest.mock import Mock
 from constants import UP, DOWN, LEFT, RIGHT
 from mazedata import MazeBase
 
+
 @pytest.fixture
 def maze_base():
     return MazeBase()
+
 
 @pytest.fixture
 def mock_nodes():
@@ -16,9 +18,11 @@ def mock_nodes():
     nodes.denyAccessList = Mock()
     return nodes
 
+
 @pytest.fixture
 def mock_ghosts():
     return Mock()
+
 
 class TestMazeBase:
     def test_init(self, maze_base):

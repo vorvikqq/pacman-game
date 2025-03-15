@@ -2,10 +2,11 @@ import pygame
 from vector import Vector
 from constants import *
 
+
 class Text():
     """
     Represents a text object to be displayed on the screen.
-    
+
     Attributes:
         id (int or None): Unique identifier for the text object.
         text (str): The text content to be displayed.
@@ -17,6 +18,7 @@ class Text():
         position (Vector): The (x, y) position of the text.
         timer (float): Timer tracking how long the text has been displayed.
     """
+
     def __init__(self, text, color, x, y, size, time=None, visible=True, id=None):
         """
         Initializes a Text object.
@@ -99,11 +101,12 @@ class Text():
 class TextGroup():
     """
     Manages multiple Text objects for display.
-    
+
     Attributes:
         nextid (int): Next available unique identifier for text objects.
         alltext (dict): Dictionary storing all active Text objects.
     """
+
     def __init__(self):
         """
         Initializes the TextGroup and sets up default text elements.
@@ -137,7 +140,7 @@ class TextGroup():
             added_id = self.nextid
             self.nextid += 1
         return added_id
-        
+
     def remove_text(self, id):
         """
         Removes a text object from the group by its ID.
@@ -152,12 +155,12 @@ class TextGroup():
         Initializes the default text elements for the game.
         """
         self.alltext[SCORETXT] = Text("0".zfill(8), WHITE, 0, TILEHEIGHT, TILEHEIGHT)
-        self.alltext[LEVELTXT] = Text(str(1).zfill(3), WHITE, 23*TILEWIDTH, TILEHEIGHT, TILEHEIGHT)
-        self.alltext[READYTXT] = Text("READY!", YELLOW, 11.25*TILEWIDTH, 20*TILEHEIGHT, TILEHEIGHT, visible=False)
-        self.alltext[PAUSETXT] = Text("PAUSED!", YELLOW, 10.625*TILEWIDTH, 20*TILEHEIGHT, TILEHEIGHT, visible=False)
-        self.alltext[GAMEOVERTXT] = Text("GAMEOVER!", YELLOW, 10*TILEWIDTH, 20*TILEHEIGHT, TILEHEIGHT, visible=False)
+        self.alltext[LEVELTXT] = Text(str(1).zfill(3), WHITE, 23 * TILEWIDTH, TILEHEIGHT, TILEHEIGHT)
+        self.alltext[READYTXT] = Text("READY!", YELLOW, 11.25 * TILEWIDTH, 20 * TILEHEIGHT, TILEHEIGHT, visible=False)
+        self.alltext[PAUSETXT] = Text("PAUSED!", YELLOW, 10.625 * TILEWIDTH, 20 * TILEHEIGHT, TILEHEIGHT, visible=False)
+        self.alltext[GAMEOVERTXT] = Text("GAMEOVER!", YELLOW, 10 * TILEWIDTH, 20 * TILEHEIGHT, TILEHEIGHT, visible=False)
         self.add_text("SCORE", WHITE, 0, 0, TILEHEIGHT)
-        self.add_text("LEVEL", WHITE, 23*TILEWIDTH, 0, TILEHEIGHT)
+        self.add_text("LEVEL", WHITE, 23 * TILEWIDTH, 0, TILEHEIGHT)
 
     def update(self, dt):
         """

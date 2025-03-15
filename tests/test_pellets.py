@@ -7,17 +7,21 @@ from vector import Vector
 
 pygame.init()
 
+
 @pytest.fixture
 def screen():
     return pygame.display.set_mode((800, 600))
+
 
 @pytest.fixture
 def pellet():
     return Pellet(1, 1)
 
+
 @pytest.fixture
 def power_pellet():
     return PowerPellet(1, 1)
+
 
 @pytest.fixture
 def pellet_group(tmp_path):
@@ -31,12 +35,13 @@ X X X X X X X X X X X X X X X X X X X X X X X X X X X X
     p.write_text(pellet_data)
     return PelletGroup(str(p))
 
+
 class TestPellet:
     def test_init(self, pellet):
         assert isinstance(pellet.position, Vector)
         assert pellet.color == (255, 255, 0)
         assert pellet.points == 10
-        assert pellet.visible == True
+        assert pellet.visible
 
     def test_render_visible(self, pellet, screen):
         pellet.visible = True
@@ -49,6 +54,7 @@ class TestPellet:
         with patch.object(pygame, 'draw') as mock_draw:
             pellet.render(screen)
             mock_draw.circle.assert_not_called()
+
 
 class TestPowerPellet:
     def test_init(self, power_pellet):
@@ -67,6 +73,7 @@ class TestPowerPellet:
         power_pellet.update(0.2)
         assert power_pellet.visible == initial_visible
         assert power_pellet.timer == 0.2
+
 
 class TestPelletGroup:
     def test_init(self, pellet_group):

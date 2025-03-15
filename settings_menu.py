@@ -2,9 +2,10 @@ import pygame
 from pygame.constants import *
 from constants import *
 
+
 class SettingsMenu:
     """
-    Represents the settings menu where the player can adjust game difficulty 
+    Represents the settings menu where the player can adjust game difficulty
     and background color.
 
     Attributes:

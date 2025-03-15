@@ -5,6 +5,7 @@ from entity import Entity
 from vector import Vector
 from constants import *
 
+
 @pytest.fixture
 def mock_node():
     node = Mock()
@@ -13,9 +14,11 @@ def mock_node():
     node.access = {UP: [], DOWN: [], LEFT: [], RIGHT: []}
     return node
 
+
 @pytest.fixture
 def entity(mock_node):
     return Entity(mock_node)
+
 
 def test_initialization(entity, mock_node):
     assert entity.node == mock_node
@@ -25,10 +28,12 @@ def test_initialization(entity, mock_node):
     assert entity.speed == 100 * TILEWIDTH / 16
     assert entity.direction == UP
 
+
 def test_set_position(entity):
     entity.node.position = Vector(5, 5)
     entity.set_position()
     assert entity.position == Vector(5, 5)
+
 
 def test_set_spawn_node(entity, mock_node):
     entity.set_spawn_node(mock_node)
@@ -39,11 +44,13 @@ def test_set_spawn_node(entity, mock_node):
     assert entity.position == mock_node.position
     assert entity.direction == UP
 
+
 def test_valid_direction(entity, mock_node):
     mock_node.neighbors[UP] = Mock()
     mock_node.access[UP] = [entity.name]
     assert entity.valid_direction(UP) is True
     assert entity.valid_direction(DOWN) is False
+
 
 def test_reverse_direction():
     node_mock = Mock()
@@ -57,9 +64,11 @@ def test_reverse_direction():
     assert entity.node == target_mock
     assert entity.target == node_mock
 
+
 def test_set_speed(entity):
     entity.set_speed(2.0)
     assert entity.speed == 2.0 * TILEWIDTH / 16
+
 
 def test_reset(entity):
     entity.direction = RIGHT
@@ -81,10 +90,10 @@ def test_overshot_target():
     entity = Entity(node_mock)
     entity.target = target_mock
 
-    entity.position = Vector(5, 0)  
+    entity.position = Vector(5, 0)
     assert not entity.overshot_target()
 
-    entity.position = Vector(15, 0)  
+    entity.position = Vector(15, 0)
     assert entity.overshot_target()
 
     entity.target = None

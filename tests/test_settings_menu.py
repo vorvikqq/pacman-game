@@ -6,16 +6,19 @@ from settings_menu import SettingsMenu
 
 pygame.init()
 
+
 @pytest.fixture(autouse=True)
 def mock_pygame_font():
     with patch('pygame.font.Font') as mock_font:
         mock_font.return_value = Mock()
         yield mock_font
 
+
 @pytest.fixture(autouse=True)
 def mock_pygame_display():
     with patch('pygame.display.update') as mock_update:
         yield mock_update
+
 
 @pytest.fixture
 def game_controller():

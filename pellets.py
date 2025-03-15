@@ -4,6 +4,7 @@ from constants import *
 import numpy as np
 from typing import List
 
+
 class Pellet:
     """
     Represents a basic pellet in the game that the player can collect.

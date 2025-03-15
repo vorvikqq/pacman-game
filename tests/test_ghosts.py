@@ -13,6 +13,7 @@ pygame.display.set_mode((1, 1))
 
 spritesheet = pygame.image.load("images/spritesheet.png").convert()
 
+
 @pytest.fixture
 def mock_pacman():
     pacman = Mock()
@@ -25,24 +26,27 @@ def mock_pacman():
         DOWN: Vector(0, 1),
         LEFT: Vector(-1, 0),
         RIGHT: Vector(1, 0)
-    }  
+    }
     return pacman
+
 
 @pytest.fixture
 def mock_node():
     node = Mock()
     node.position = Vector(50, 50)
     node.neighbors = {UP: Mock(), DOWN: Mock(), LEFT: Mock(), RIGHT: Mock(), PORTAL: None}
-    node.access = {UP: [GHOST], DOWN: [GHOST], LEFT: [GHOST], RIGHT: [GHOST]} 
+    node.access = {UP: [GHOST], DOWN: [GHOST], LEFT: [GHOST], RIGHT: [GHOST]}
     return node
+
 
 @pytest.fixture
 def ghost(mock_node, mock_pacman):
     ghost = Ghost(mock_node, mock_pacman)
-    ghost.direction = RIGHT  
-    ghost.directions = {UP: Vector(0, -1), DOWN: Vector(0, 1), LEFT: Vector(-1, 0), RIGHT: Vector(1, 0)}  
-    ghost.name = GHOST  
+    ghost.direction = RIGHT
+    ghost.directions = {UP: Vector(0, -1), DOWN: Vector(0, 1), LEFT: Vector(-1, 0), RIGHT: Vector(1, 0)}
+    ghost.name = GHOST
     return ghost
+
 
 class TestGhost:
     def test_update_move_method_scatter(self, ghost):
@@ -104,27 +108,29 @@ class TestGhost:
         assert ghost.points == 200
         assert ghost.move_method == ghost.goal_movement
 
+
 class TestBlinky:
     def test_update_goal_chase(self, mock_node, mock_pacman):
         blinky = Blinky(mock_node, mock_pacman)
-        blinky.sprites = GhostSprites(blinky)  
+        blinky.sprites = GhostSprites(blinky)
         blinky.mode.current_mode = CHASE
         blinky.update_goal()
         assert blinky.goal == mock_pacman.node.position
 
     def test_update_goal_scatter(self, mock_node, mock_pacman):
         blinky = Blinky(mock_node, mock_pacman)
-        blinky.sprites = GhostSprites(blinky)  
+        blinky.sprites = GhostSprites(blinky)
         blinky.mode.current_mode = SCATTER
         blinky.update_goal()
         assert blinky.goal == Vector(0, 0)
 
     def test_update_goal_spawn(self, mock_node, mock_pacman):
         blinky = Blinky(mock_node, mock_pacman)
-        blinky.sprites = GhostSprites(blinky)  
+        blinky.sprites = GhostSprites(blinky)
         blinky.mode.current_mode = SPAWN
         blinky.update_goal()
         assert blinky.goal == blinky.home_goal
+
 
 class TestPinky:
     def test_update_goal_chase(self, mock_node, mock_pacman):
@@ -148,6 +154,7 @@ class TestPinky:
         pinky.mode.current_mode = SPAWN
         pinky.update_goal()
         assert pinky.goal == pinky.home_goal
+
 
 class TestInky:
     def test_update_goal_chase(self, mock_node, mock_pacman):
@@ -185,11 +192,12 @@ class TestInky:
 
         assert inky.goal == inky.home_goal
 
+
 class TestClyde:
     def test_update_goal_chase_far(self, mock_node, mock_pacman):
         clyde = Clyde(mock_node, mock_pacman)
         clyde.sprites = GhostSprites(clyde)
-        clyde.position = Vector(500, 500)  
+        clyde.position = Vector(500, 500)
         clyde.mode.current_mode = CHASE
         clyde.update_goal()
 
@@ -199,7 +207,7 @@ class TestClyde:
     def test_update_goal_chase_close(self, mock_node, mock_pacman):
         clyde = Clyde(mock_node, mock_pacman)
         clyde.sprites = GhostSprites(clyde)
-        clyde.position = Vector(110, 110)  
+        clyde.position = Vector(110, 110)
         clyde.mode.current_mode = CHASE
         clyde.update_goal()
 
@@ -221,6 +229,7 @@ class TestClyde:
         clyde.update_goal()
 
         assert clyde.goal == clyde.home_goal
+
 
 class TestGhostsGroup:
     def test_init(self, mock_node, mock_pacman):
