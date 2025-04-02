@@ -116,6 +116,11 @@ class GameController(object):
         Resets the current level without restarting the game.
         """
         self.pause.paused = True
+        self.musicController.play_bg_music()
+        if self.musicController.sound_status == False:
+            self.musicController.sound_status = True
+            self.musicController.pause_music()
+        
         self.textGroup.show_text(READYTXT)
         self.pacman.reset()
         self.ghosts.reset()
