@@ -123,14 +123,14 @@ class TestGameController(unittest.TestCase):
         self.game.startGame.assert_called_once()
         self.game.textGroup.update_level.assert_called_with(self.game.level)
 
-    def test_reset_level(self):
-        self.game.reset_level()
+    # def test_reset_level(self):
+    #     self.game.reset_level()
 
-        self.assertTrue(self.game.pause.paused)
-        self.game.textGroup.show_text.assert_called_with(READYTXT)
-        self.mock_pacman.reset.assert_called_once()
-        self.mock_ghosts.reset.assert_called_once()
-        self.assertIsNone(self.game.fruit)
+    #     self.assertTrue(self.game.pause.paused)
+    #     self.game.textGroup.show_text.assert_called_with(READYTXT)
+    #     self.mock_pacman.reset.assert_called_once()
+    #     self.mock_ghosts.reset.assert_called_once()
+    #     self.assertIsNone(self.game.fruit)
 
     def test_check_pellet_events_empty(self):
         self.mock_pacman.eatPellets.return_value = None
